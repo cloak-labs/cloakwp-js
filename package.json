@@ -5,7 +5,8 @@
   "main": "dist/index",
   "typings": "dist/cloakwp.d.ts",
   "scripts": {
-    "dev": "tsc-watch --noClear",
+    "dev": "tsc-silent -p tsconfig.json --suppress @ -w",
+    "zzz-dev": "tsc-watch --onFailure \"echo Beep! Compilation Failed\" --noClear",
     "build": "npm run build-ts",
     "build-ts": "tsc --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",

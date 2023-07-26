@@ -27,6 +27,6 @@ var Block_1 = require("./Block");
 var blockConfig_1 = require("./context/blockConfig");
 function Blocks(_a) {
     var data = _a.data, blocks = _a.blocks, container = _a.container, containerCondition = _a.containerCondition, _b = _a.merge, merge = _b === void 0 ? true : _b, _c = _a.dataSource, dataSource = _c === void 0 ? 'default' : _c, props = __rest(_a, ["data", "blocks", "container", "containerCondition", "merge", "dataSource"]);
-    return ((0, jsx_runtime_1.jsx)(blockConfig_1.default, __assign({ blocks: blocks, container: container, containerCondition: containerCondition, merge: merge }, { children: data === null || data === void 0 ? void 0 : data.map(function (block, i) { return ((0, jsx_runtime_1.jsx)(Block_1.default, __assign({ block: block, prevSibling: i == 0 ? null : data[i - 1], nextSibling: i == data.length - 1 ? null : data[i + 1], dataSource: dataSource }, props), i)); }) })));
+    return ((0, jsx_runtime_1.jsx)(blockConfig_1.default, __assign({ blocks: blocks, container: container, containerCondition: containerCondition, merge: merge }, { children: data === null || data === void 0 ? void 0 : data.map(function (block, i) { return ((0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, { children: (0, jsx_runtime_1.jsx)(Block_1.default, __assign({ block: block, prevSibling: i == 0 ? null : data[i - 1], nextSibling: i == data.length - 1 ? null : data[i + 1], dataSource: dataSource }, props), i) })); }) })));
 }
 exports.default = Blocks;
