@@ -1,22 +1,11 @@
-# cloakwp
-An NPM package for integrating WordPress into your NextJS front-end.
+# cloakwp-js
 
-## Package development with Yalc
-This is for cloakwp package developers only:
-1. Install Yalc globally `npm i yalc -g`
-2. `cd cloakwp`
-3. `yalc publish`
-4. Change to parent project folder `cd my-project`
-5. `yalc add cloakwp`
-6. `yalc link cloakwp`
-7. To push changes made to `cloakwp` to your parent project in real-time, run the watcher script `npm run watch`
-8. Run `yalc remove cloakwp` inside parent project to remove locally linked package
+A JavaScript/NPM package that connects your decoupled React frontend to one or more headless WordPress instances. It provides out-of-the-box solutions to all the things you would otherwise be giving up by choosing headless over the traditional approach, such as draft previews, the WP Admin bar (including user authentication), simple data fetching utilities, incremental static revalidation utilities (enabling content updates to take effect as quickly as server-side rendering, without actually rendering the page on every request), and so on (more details later). It works in tandem with the [CloakWP Plugin](https://github.com/cloak-labs/cloakwp-plugin), installed on your WP instance, to enable an out-of-the-box, harmonious integration.
 
-## Environment Variables
-```ini
-CLOAKWP_DEV_URL= # NextJS dev server URL
-CLOAKWP_PROD_URL= # NextJS prod server URL
-WORDPRESS_GRAPH_API= # Wordpress GraphQL endpoint
-WORDPRESS_REST_API= # Wordpress Rest API endpoint
-CUSTOM_CLOAKWP_CONFIG_PATH= # Set a custom path to configuration file
+## Install
+
+```bash
+npm install cloakwp
 ```
+
+Currently in beta. More details and documentation coming soon.
