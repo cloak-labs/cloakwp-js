@@ -20,7 +20,7 @@ var useBlockStyleBuilder_1 = require("../hooks/useBlockStyleBuilder");
 function Image(_a) {
     var _b, _c, _d;
     var block = _a.block, className = _a.className, _e = _a.quality, quality = _e === void 0 ? 75 : _e, _f = _a.priority, priority = _f === void 0 ? false : _f, _g = _a.placeholder, placeholder = _g === void 0 ? 'empty' : _g, blurDataURL = _a.blurDataURL, containerClassName = _a.containerClassName;
-    var _h = (0, useBlockStyleBuilder_1.useBlockStyleBuilder)(block.data), classes = _h.classes, styles = _h.styles;
+    var _h = (0, useBlockStyleBuilder_1.useBlockStyleBuilder)(block), classes = _h.classes, styles = _h.styles;
     var _j = (_b = block === null || block === void 0 ? void 0 : block.data) === null || _b === void 0 ? void 0 : _b.attrs, url = _j.url, alt = _j.alt, caption = _j.caption, href = _j.href, width = _j.width, height = _j.height, align = _j.align, wpClassName = _j.className;
     var captionColor = ((_d = (_c = block === null || block === void 0 ? void 0 : block.parent) === null || _c === void 0 ? void 0 : _c.attrs) === null || _d === void 0 ? void 0 : _d.textColor) || 'gray-700';
     styles = __assign(__assign({}, styles), { width: width || '100%', maxWidth: '100%' });

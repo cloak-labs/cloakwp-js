@@ -72,14 +72,20 @@ function getPreviewData(previewParams) {
                     return [4 /*yield*/, (0, useFetchRestAPI_1.useFetchRestAPI)("/".concat(postTypeRestEndpoint, "/").concat(postId, "/revisions/").concat(revisionId))];
                 case 1:
                     data = _d.sent();
-                    _d.label = 2;
-                case 2:
-                    if (!(!revisionId || !data || ((_a = data === null || data === void 0 ? void 0 : data.data) === null || _a === void 0 ? void 0 : _a.status) == 404)) return [3 /*break*/, 4];
-                    return [4 /*yield*/, (0, useFetchRestAPI_1.useFetchRestAPI)("/".concat(postTypeRestEndpoint, "/").concat(postId))];
+                    return [3 /*break*/, 4];
+                case 2: return [4 /*yield*/, (0, useFetchRestAPI_1.useFetchRestAPI)("/".concat(postTypeRestEndpoint, "/").concat(postId, "/revisions/"))];
                 case 3:
+                    // if no revisionId is provided, we fetch all revisions and return the latest one
                     data = _d.sent();
+                    data = Array.isArray(data) ? data[0] : data;
                     _d.label = 4;
-                case 4: return [2 /*return*/, {
+                case 4:
+                    if (!(!data || ((_a = data === null || data === void 0 ? void 0 : data.data) === null || _a === void 0 ? void 0 : _a.status) == 404)) return [3 /*break*/, 6];
+                    return [4 /*yield*/, (0, useFetchRestAPI_1.useFetchRestAPI)("/".concat(postTypeRestEndpoint, "/").concat(postId))];
+                case 5:
+                    data = _d.sent();
+                    _d.label = 6;
+                case 6: return [2 /*return*/, {
                         data: data,
                         params: __assign({ revisionId: revisionId, postId: postId, postTypeRestEndpoint: postTypeRestEndpoint }, rest)
                     }];

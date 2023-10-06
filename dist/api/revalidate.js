@@ -36,33 +36,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var useGlobalConfig_1 = require("../hooks/useGlobalConfig");
 function regenerateStaticPage(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var config, _a, pathname, secret, error_1;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0: return [4 /*yield*/, (0, useGlobalConfig_1.useGlobalConfig)()];
+        var pathname, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    pathname = req.query.pathname;
+                    _a.label = 1;
                 case 1:
-                    config = _b.sent();
-                    _a = req.query, pathname = _a.pathname, secret = _a.secret;
-                    _b.label = 2;
-                case 2:
-                    _b.trys.push([2, 4, , 5]);
-                    if (secret !== config.sources.default.secret) {
-                        throw 'Page Revalidation - Invalid preview secret';
-                    }
+                    _a.trys.push([1, 3, , 4]);
                     return [4 /*yield*/, res.revalidate(pathname).catch(function (err) {
-                            throw "Page Revalidation - Can't revalidate path '".concat(pathname, "'");
+                            throw "Page Revalidation ".concat(err);
                         })];
-                case 3:
-                    _b.sent();
+                case 2:
+                    _a.sent();
+                    console.log("Revalidating page: ", pathname);
                     return [2 /*return*/, res.json({ page: pathname, revalidated: true })];
-                case 4:
-                    error_1 = _b.sent();
-                    console.error(new Error(error_1));
+                case 3:
+                    error_1 = _a.sent();
                     return [2 /*return*/, res.status(500).send({ error: error_1, slug: pathname })];
-                case 5: return [2 /*return*/];
+                case 4: return [2 /*return*/];
             }
         });
     });

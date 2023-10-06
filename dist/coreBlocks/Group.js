@@ -19,10 +19,10 @@ var classNames_1 = require("../utils/classNames");
 function Group(_a) {
     var _b, _c, _d, _e, _f, _g, _h;
     var block = _a.block;
-    var _j = (0, useBlockStyleBuilder_1.useBlockStyleBuilder)(block.data), classes = _j.classes, styles = _j.styles;
+    var _j = (0, useBlockStyleBuilder_1.useBlockStyleBuilder)(block), classes = _j.classes, styles = _j.styles;
     if (!((_b = block === null || block === void 0 ? void 0 : block.data) === null || _b === void 0 ? void 0 : _b.innerBlocks))
         return (0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, {});
-    var _k = block.data.attrs, layout = _k.layout, align = _k.align;
+    var _k = block.attrs, layout = _k.layout, align = _k.align;
     var numBlocks = (_d = (_c = block === null || block === void 0 ? void 0 : block.data) === null || _c === void 0 ? void 0 : _c.innerBlocks) === null || _d === void 0 ? void 0 : _d.length;
     var groupClasses = (0, classNames_1.classNames)('flex gap-x-4 md:gap-x-6 flex-wrap', layout.type == 'flex' ? (layout.flexWrap ? 'flex-row' : 'flex-col') : 'flex-col', numBlocks <= 2 ? 'sm:flex-nowrap' : (numBlocks <= 3 ? 'md:flex-nowrap' : (numBlocks <= 4 ? 'lg:flex-nowrap' : '')));
     if (align != 'full') {

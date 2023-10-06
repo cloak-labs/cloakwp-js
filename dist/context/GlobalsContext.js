@@ -22,11 +22,20 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.useGlobals = exports.GlobalsProvider = void 0;
 var jsx_runtime_1 = require("react/jsx-runtime");
-var Block_1 = require("./Block");
-var blockConfig_1 = require("./context/blockConfig");
-function Blocks(_a) {
-    var data = _a.data, blocks = _a.blocks, container = _a.container, containerCondition = _a.containerCondition, _b = _a.merge, merge = _b === void 0 ? true : _b, _c = _a.dataSource, dataSource = _c === void 0 ? "default" : _c, props = __rest(_a, ["data", "blocks", "container", "containerCondition", "merge", "dataSource"]);
-    return ((0, jsx_runtime_1.jsx)(blockConfig_1.default, __assign({ blocks: blocks, container: container, containerCondition: containerCondition, merge: merge }, { children: data === null || data === void 0 ? void 0 : data.map(function (block, i) { return ((0, jsx_runtime_1.jsx)(Block_1.default, __assign({ block: block, prevSibling: i == 0 ? null : data[i - 1], nextSibling: i == data.length - 1 ? null : data[i + 1], dataSource: dataSource }, props), i)); }) })));
-}
-exports.default = Blocks;
+var react_1 = require("react");
+/*
+  A fairly generic Global Context utility that allows CloakWP users to wrap their app with <GlobalsProvider>,
+  and pass in whatever props they want, which become accessible anywhere in their app via the useGlobals() hook.
+  Common use-cases include passing in menu data and ACF Options data.
+*/
+var GlobalsContext = (0, react_1.createContext)({});
+var GlobalsProvider = function (_a) {
+    var children = _a.children, props = __rest(_a, ["children"]);
+    return ((0, jsx_runtime_1.jsx)(GlobalsContext.Provider, __assign({ value: __assign({}, props // data from ACF Options page(s)
+        ) }, { children: children })));
+};
+exports.GlobalsProvider = GlobalsProvider;
+var useGlobals = function () { return (0, react_1.useContext)(GlobalsContext); };
+exports.useGlobals = useGlobals;

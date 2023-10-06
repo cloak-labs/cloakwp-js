@@ -36,31 +36,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var AUTH_SECRET = process.env.CLOAKWP_AUTH_SECRET;
-function validateRouteSecretToken(req, res) {
+var config_1 = require("../config");
+function verifyUserAuthStatus(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var secret;
+        var wp, wpCookie, isLoggedIn;
         return __generator(this, function (_a) {
-            secret = req.query.secret;
-            // Check the secret
-            if (!AUTH_SECRET) {
-                // return { error: res.status(401).json({ message: "You haven't supplied a secret via the 'sources.default.secret' prop in your cloakwp.config.js file." }) };
-                return [2 /*return*/, {
-                        error: res.status(401).json({
-                            message: "You haven't set a CLOAKWP_AUTH_SECRET env variable.",
-                        }),
-                    }];
+            switch (_a.label) {
+                case 0:
+                    wp = (0, config_1.getWpInstance)().serverApi();
+                    wpCookie = req.headers.cookie || "";
+                    wp.setHeaders("Cookie", wpCookie);
+                    return [4 /*yield*/, wp.isLoggedIn()];
+                case 1:
+                    isLoggedIn = _a.sent();
+                    res.json(isLoggedIn);
+                    return [2 /*return*/];
             }
-            if (secret !== AUTH_SECRET) {
-                return [2 /*return*/, {
-                        error: res.status(401).json({
-                            message: 'Invalid secret token -- pass in a valid secret via a "secret" parameter that matches the secret you supplied as "sources.default.secret" in your cloakwp.config.js file.',
-                        }),
-                    }];
-            }
-            // return { redirectUrlBase: `${url}${adminPath}`}
-            return [2 /*return*/, { valid: true }];
         });
     });
 }
-exports.default = validateRouteSecretToken;
+exports.default = verifyUserAuthStatus;

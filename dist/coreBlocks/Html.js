@@ -15,6 +15,6 @@ var jsx_runtime_1 = require("react/jsx-runtime");
 var html_react_parser_1 = require("html-react-parser");
 function Html(_a) {
     var block = _a.block, className = _a.className;
-    return ((0, jsx_runtime_1.jsx)("div", __assign({ className: className }, { children: (0, html_react_parser_1.default)(block.data.rendered) })));
+    return ((0, jsx_runtime_1.jsx)("div", __assign({ className: className }, { children: (0, html_react_parser_1.default)(block.rendered) })));
 }
 exports.default = Html;

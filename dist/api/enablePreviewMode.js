@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,65 +47,77 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var getPost_1 = require("../getters/getPost");
-var useGlobalConfig_1 = require("../hooks/useGlobalConfig");
+var config_1 = require("../config");
+// import { getPost } from "../getters/getPost";
 function enablePreviewMode(req, res) {
+    var _a;
     return __awaiter(this, void 0, void 0, function () {
-        var config, _a, secret, revisionId, postId, postType, postTypeRestEndpoint, pathname;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0: return [4 /*yield*/, (0, useGlobalConfig_1.useGlobalConfig)()];
-                case 1:
-                    config = _b.sent();
-                    _a = req.query, secret = _a.secret, revisionId = _a.revisionId, postId = _a.postId, postType = _a.postType;
-                    if (postId == 0 || postId == '0') {
-                        postId = "".concat(revisionId); // this fixes previewing a draft or a post that doesn't have a revision.. string interpolation is used to *copy* revisionId rather than reference it
-                        revisionId = null;
-                    }
-                    // Check the secret and next parameters.
-                    // This secret should only be known by this API route
-                    if (!config.sources.default.secret) {
-                        return [2 /*return*/, res.status(401).json({ message: "You haven't supplied a secret via the 'sources.default.secret' prop in your cloakwp.config.js file." })];
-                    }
-                    if (secret !== config.sources.default.secret) {
-                        return [2 /*return*/, res.status(401).json({ message: 'Invalid secret token -- pass in a valid secret via a "secret" parameter that matches the secret you supplied as "sources.default.secret" in your cloakwp.config.js file.' })];
-                    }
+        var wp, _b, revisionId, postId, postType, postTypeRestEndpoint, request, revision;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    console.log("=== ENABLE PREVIEW ===");
+                    wp = (0, config_1.getWpInstance)().serverApi();
+                    _b = req.query, revisionId = _b.revisionId, postId = _b.postId, postType = _b.postType;
+                    // if (postId == 0 || postId == "0") {
+                    //   postId = `${revisionId}`; // this fixes previewing a draft or a post that doesn't have a revision.. string interpolation is used to *copy* revisionId rather than reference it
+                    //   revisionId = null;
+                    // }
                     // if (!revisionId) return res.status(401).json({ message: 'A post revision ID was not supplied -- pass it in via a "revisionId" parameter.' });
                     if (!postId)
-                        return [2 /*return*/, res.status(401).json({ message: 'A master post ID was not supplied -- pass it in via a "postId" parameter.' })];
+                        return [2 /*return*/, res.status(401).json({
+                                message: 'A master post ID was not supplied -- pass it in via a "postId" parameter.',
+                            })];
                     if (!postType)
-                        return [2 /*return*/, res.status(401).json({ message: 'A post type was not supplied -- pass it in via a "postType" parameter.' })];
+                        return [2 /*return*/, res.status(401).json({
+                                message: 'A post type was not supplied -- pass it in via a "postType" parameter.',
+                            })];
                     postTypeRestEndpoint = postType;
-                    if (postType == 'page')
-                        postTypeRestEndpoint = 'pages';
-                    else if (postType == 'post')
-                        postTypeRestEndpoint = 'posts';
-                    return [4 /*yield*/, (0, getPost_1.getPost)({
-                            postType: postTypeRestEndpoint,
-                            id: postId
-                        })];
-                case 2:
-                    pathname = (_b.sent()).data.pathname;
+                    if (postType == "page")
+                        postTypeRestEndpoint = "pages";
+                    else if (postType == "post")
+                        postTypeRestEndpoint = "posts";
+                    request = (_a = wp[postTypeRestEndpoint]) === null || _a === void 0 ? void 0 : _a.call(wp).id(postId);
+                    if (!revisionId) return [3 /*break*/, 2];
+                    return [4 /*yield*/, request.revisions(revisionId).get()];
+                case 1:
+                    revision = _c.sent();
+                    return [3 /*break*/, 4];
+                case 2: return [4 /*yield*/, request.revisions().single().get()];
+                case 3:
+                    revision = _c.sent();
+                    _c.label = 4;
+                case 4:
+                    console.log({ revision: revision });
+                    // Fetch WordPress to check if the provided `id` or `slug` exists
+                    // const {
+                    //   data: { pathname },
+                    // } = await getPost({
+                    //   postType: postTypeRestEndpoint,
+                    //   id: postId,
+                    // });
+                    if (!revision) {
+                        return [2 /*return*/, res.status(401).json({
+                                message: "Post of type \"".concat(postType, "\" with ID \"").concat(postId, "\" does not have any unpublished revisions to preview."),
+                            })];
+                    }
                     // If the post doesn't exist prevent preview mode from being enabled
-                    if (!pathname) {
-                        return [2 /*return*/, res.status(401).json({ message: "Post of type \"".concat(postType, "\" with ID \"").concat(postId, "\" was not found; therefore, we abandoned preview mode.") })];
+                    if (!revision.pathname) {
+                        return [2 /*return*/, res.status(401).json({
+                                message: "Post of type \"".concat(postType, "\" with ID \"").concat(postId, "\" is missing a pathname, so we abandoned preview mode."),
+                            })];
                     }
                     // Enable Preview Mode by setting the cookies
-                    res.setPreviewData({
-                        post: {
-                            pathname: pathname,
-                            revisionId: revisionId,
-                            postId: postId,
-                            postType: postType,
-                            postTypeRestEndpoint: postTypeRestEndpoint,
-                        },
-                    }, {
+                    res.setPreviewData(__assign(__assign({}, revision), { 
+                        // revisionId,
+                        // postId,
+                        postType: postType, postTypeRestEndpoint: postTypeRestEndpoint }), {
                         maxAge: 60 * 60,
-                        path: pathname, // The preview mode cookies apply to the page we're previewing (visiting any other page turns off preview mode)
+                        path: revision.pathname, // The preview mode cookies apply to the page we're previewing (visiting any other page turns off preview mode)
                     });
                     // Redirect to the path from the fetched post
                     // We don't redirect to `req.query.slug` as that might lead to open redirect vulnerabilities
-                    res.writeHead(307, { Location: pathname });
+                    res.writeHead(307, { Location: revision.pathname });
                     res.end();
                     return [2 /*return*/];
             }

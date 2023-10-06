@@ -18,9 +18,9 @@ var classNames_1 = require("../utils/classNames");
 var Block_1 = require("../Block");
 function List(_a) {
     var block = _a.block, className = _a.className;
-    var _b = (0, useBlockStyleBuilder_1.useBlockStyleBuilder)(block.data), classes = _b.classes, styles = _b.styles;
-    var _c = block.data, _d = _c.attrs, ordered = _d.ordered, values = _d.values, innerBlocks = _c.innerBlocks;
-    // const { ordered, values } = attrs
+    var _b = (0, useBlockStyleBuilder_1.useBlockStyleBuilder)(block), classes = _b.classes, styles = _b.styles;
+    var attrs = block.attrs, innerBlocks = block.innerBlocks;
+    var _c = attrs || {}, ordered = _c.ordered, values = _c.values;
     // console.log("These are supposed to be innerBlocks:", classes)
     var newListItemRenderingMethod = false;
     if (innerBlocks.length) {

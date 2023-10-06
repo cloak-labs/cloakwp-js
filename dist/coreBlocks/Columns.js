@@ -20,8 +20,8 @@ var classNames_1 = require("../utils/classNames");
 var Block_1 = require("../Block");
 function Columns(_a) {
     var block = _a.block;
-    var _b = (0, useBlockStyleBuilder_1.useBlockStyleBuilder)(block.data), classes = _b.classes, styles = _b.styles;
-    var columns = block.data.innerBlocks;
+    var _b = (0, useBlockStyleBuilder_1.useBlockStyleBuilder)(block), classes = _b.classes, styles = _b.styles;
+    var columns = block.innerBlocks;
     var numColumns = columns.length;
     var columnWidths = columns.map(function (col) {
         var widthVal = parseFloat(col.attrs.width);

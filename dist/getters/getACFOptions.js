@@ -36,31 +36,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var AUTH_SECRET = process.env.CLOAKWP_AUTH_SECRET;
-function validateRouteSecretToken(req, res) {
+exports.getACFOptions = void 0;
+var useFetchRestAPI_1 = require("../hooks/useFetchRestAPI");
+// Function: returns all ACF Options data using CloakWP's custom /options endpoint created by the WP Plugin
+function getACFOptions() {
     return __awaiter(this, void 0, void 0, function () {
-        var secret;
+        var res;
         return __generator(this, function (_a) {
-            secret = req.query.secret;
-            // Check the secret
-            if (!AUTH_SECRET) {
-                // return { error: res.status(401).json({ message: "You haven't supplied a secret via the 'sources.default.secret' prop in your cloakwp.config.js file." }) };
-                return [2 /*return*/, {
-                        error: res.status(401).json({
-                            message: "You haven't set a CLOAKWP_AUTH_SECRET env variable.",
-                        }),
-                    }];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, (0, useFetchRestAPI_1.useFetchRestAPI)("/options", {
+                        apiNamespace: "wp-json/cloakwp",
+                        embed: false,
+                        includeJwt: false
+                    })];
+                case 1:
+                    res = _a.sent();
+                    return [2 /*return*/, res];
             }
-            if (secret !== AUTH_SECRET) {
-                return [2 /*return*/, {
-                        error: res.status(401).json({
-                            message: 'Invalid secret token -- pass in a valid secret via a "secret" parameter that matches the secret you supplied as "sources.default.secret" in your cloakwp.config.js file.',
-                        }),
-                    }];
-            }
-            // return { redirectUrlBase: `${url}${adminPath}`}
-            return [2 /*return*/, { valid: true }];
         });
     });
 }
-exports.default = validateRouteSecretToken;
+exports.getACFOptions = getACFOptions;

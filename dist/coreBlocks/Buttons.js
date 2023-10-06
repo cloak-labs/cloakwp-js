@@ -18,7 +18,7 @@ var classNames_1 = require("../utils/classNames");
 var Block_1 = require("../Block");
 function Buttons(_a) {
     var block = _a.block, className = _a.className;
-    var _b = (0, useBlockStyleBuilder_1.useBlockStyleBuilder)(block.data), classes = _b.classes, styles = _b.styles;
-    return ((0, jsx_runtime_1.jsx)("div", __assign({ className: (0, classNames_1.classNames)("flex items-start gap-3", classes, className), style: styles }, { children: block.data.innerBlocks.map(function (buttonBlock, i) { return ((0, jsx_runtime_1.jsx)(react_1.Fragment, { children: (0, jsx_runtime_1.jsx)(Block_1.default, { block: buttonBlock, parentBlock: block.data, isNested: true }) }, i)); }) })));
+    var _b = (0, useBlockStyleBuilder_1.useBlockStyleBuilder)(block), classes = _b.classes, styles = _b.styles;
+    return ((0, jsx_runtime_1.jsx)("div", __assign({ className: (0, classNames_1.classNames)("flex items-start gap-3", classes, className), style: styles }, { children: block.innerBlocks.map(function (buttonBlock, i) { return ((0, jsx_runtime_1.jsx)(react_1.Fragment, { children: (0, jsx_runtime_1.jsx)(Block_1.default, { block: buttonBlock, parentBlock: block.data, isNested: true }) }, i)); }) })));
 }
 exports.default = Buttons;
