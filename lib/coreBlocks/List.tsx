@@ -4,9 +4,9 @@ import { classNames } from '../utils/classNames'
 import Block from '../Block'
 
 export default function List({block, className}) {
-    const {classes, styles} = useBlockStyleBuilder(block.data)
-    const { attrs: { ordered, values }, innerBlocks } = block.data
-    // const { ordered, values } = attrs
+    const {classes, styles} = useBlockStyleBuilder(block)
+    const { attrs, innerBlocks } = block
+    const { ordered, values } = attrs || {}
 
     // console.log("These are supposed to be innerBlocks:", classes)
     let newListItemRenderingMethod = false

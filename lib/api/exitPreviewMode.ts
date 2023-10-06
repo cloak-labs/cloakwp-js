@@ -12,6 +12,8 @@ export default async function exitPreviewMode(req, res) {
 
           * Therefore, using cloakwp's preview feature requires using Next v12.3.0 or greater 
   */
+  
+  
   res.clearPreviewData({ path: pathname })
 
   // Redirect the user back to the same page they were just previewing -- they'll now see the published version.

@@ -4,23 +4,28 @@ import setLoggedOut from "./setLoggedOut";
 import regenerateStaticPage from "./revalidate";
 import enablePreviewMode from "./enablePreviewMode";
 import exitPreviewMode from "./exitPreviewMode";
+import validateRouteSecretToken from "./validateRouteSecretToken";
+import verifyUserAuthStatus from "./verifyUserAuthStatus";
+
+export function withSecretValidation(req, res, callback) {
+  const { error } = validateRouteSecretToken(req, res);
+  return error ?? callback(req, res);
+}
 
 export default function apiRouter(
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse
 ): Promise<void> {
   const slug = req.query.route;
 
   switch (slug[0]) {
-    case 'login':
-      return setLoggedIn(req, res);
-    case 'logout':
-      return setLoggedOut(req, res);
-    case 'revalidate':
-      return regenerateStaticPage(req, res);
-    case 'preview':
-      return enablePreviewMode(req, res);
-    case 'exit-preview':
+    case "is-authenticated":
+      return verifyUserAuthStatus(req, res);
+    case "revalidate":
+      return withSecretValidation(req, res, regenerateStaticPage);
+    case "preview":
+      return withSecretValidation(req, res, enablePreviewMode);
+    case "exit-preview":
       return exitPreviewMode(req, res);
     default:
       res.statusCode = 404;

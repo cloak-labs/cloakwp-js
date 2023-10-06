@@ -3,7 +3,7 @@ import parse from 'html-react-parser'
 import { classNames } from '../utils/classNames';
 
 export default function Paragraph({block, className}) {
-  const {classes, styles} = useBlockStyleBuilder(block.data)
+  const {classes, styles} = useBlockStyleBuilder(block)
   
   return (        
     <p
@@ -15,7 +15,7 @@ export default function Paragraph({block, className}) {
       )}
       style={styles}
     >
-      {parse(block.data.attrs.content)}
+      {parse(block.attrs.content)}
     </p>
   );
 }

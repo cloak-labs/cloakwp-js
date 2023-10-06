@@ -15,7 +15,7 @@ export default function Image({
   containerClassName
 }) {
 
-  let {classes, styles} = useBlockStyleBuilder(block.data)
+  let {classes, styles} = useBlockStyleBuilder(block)
   let { url, alt, caption, href, width, height, align, className: wpClassName } = block?.data?.attrs
   const captionColor = block?.parent?.attrs?.textColor || 'gray-700'
 

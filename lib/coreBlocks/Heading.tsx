@@ -3,8 +3,8 @@ import parse from "html-react-parser";
 import { classNames } from "../utils/classNames.js";
 
 export default function Heading({ block, className, tags }) {
-  const { classes, styles } = useBlockStyleBuilder(block.data);
-  const { level, content } = block.data.attrs;
+  const { classes, styles } = useBlockStyleBuilder(block);
+  const { level, content } = block.attrs;
 
   // console.log("heading tags: ", tags);
 

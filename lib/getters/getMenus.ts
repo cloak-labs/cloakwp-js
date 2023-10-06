@@ -9,35 +9,36 @@ export async function getMenus(slug = '') {
     includeJwt: false
   });
 
-  if(!Array.isArray(res)) res = [res]
+  // if(!Array.isArray(res)) res = [res]
 
   // convert internal links to relative paths to ensure menu links work across different environments
-  const formattedMenus = res?.map(menu => {
-    const formattedMenuItems = menu.menu_items?.map(item => {
-      let { link_type, url } = item
+  // const formattedMenus = res?.map(menu => {
+  //   const formattedMenuItems = menu.menu_items?.map(item => {
+  //     let { link_type, url } = item
 
-      if (link_type == "custom") return item // don't alter custom links since these are most likely linking to 3rd party sites
+  //     if (link_type == "custom") return item // don't alter custom links since these are most likely linking to 3rd party sites
 
-      // remove http:// or https:// from url:
-      url = url.replace("https://", "").replace("http://", "")
+  //     // remove http:// or https:// from url:
+  //     url = url.replace("https://", "").replace("http://", "")
   
-      // now chop off domain name so we're left with a relative path
-      url = url.substring(url.indexOf('/'))
+  //     // now chop off domain name so we're left with a relative path
+  //     url = url.substring(url.indexOf('/'))
   
-      // Remove trailing backslash to avoid hydration error:
-      url = url.replace(/\/$/, "")
+  //     // Remove trailing backslash to avoid hydration error:
+  //     url = url.replace(/\/$/, "")
   
-      return {
-        ...item,
-        url
-      }
-    })
+  //     return {
+  //       ...item,
+  //       url
+  //     }
+  //   })
 
-    return {
-      ...menu,
-      menu_items: formattedMenuItems
-    }
-  })
+  //   return {
+  //     ...menu,
+  //     menu_items: formattedMenuItems
+  //   }
+  // })
 
-  return slug && Array.isArray(formattedMenus) ? formattedMenus[0] : formattedMenus
+  // return slug && Array.isArray(formattedMenus) ? formattedMenus[0] : formattedMenus
+  return res
 }

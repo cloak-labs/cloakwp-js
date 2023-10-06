@@ -1,54 +1,74 @@
-import Blocks from './Blocks';
-import { useGlobalConfig } from './hooks/useGlobalConfig';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import Blocks from "./Blocks";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export function BlockPreviewPage({ blockData }) {
-  console.log({ blockData });
-
+  const [previewHeight, setPreviewHeight] = useState(getHeight);
   const router = useRouter();
 
-  const sendHeightToParent = () => {
-    setTimeout(() => {
-      // Get the content height and send it to the parent website
-      console.log('send height to parent, documentElement: ', document.documentElement)
-      const docHeight = document.documentElement.scrollHeight;
-      const contentHeight = document.querySelector('#previewBlock').clientHeight;
-      window.parent?.postMessage(contentHeight || docHeight, '*');
-    }, 500)
+  const sendHeightToParent = (h = null) => {
+    let height = h;
+    if (!h) height = getHeight();
+    console.log("Sending height to Gutenberg: ", height);
+    window.parent?.postMessage(height, "*");
   };
 
-  // when parent sends message, handleIframeMessage() handles it
+  function getHeight() {
+    const minHeight = 20;
+    if (typeof document !== "undefined") {
+      const { scrollHeight = minHeight, offsetHeight = minHeight } =
+        document.documentElement || {};
+      return Math.max(scrollHeight, offsetHeight);
+    }
+    return minHeight;
+  }
+
+  // when parent (i.e. Gutenberg Editor) sends message, handleIframeMessage() handles it:
   const handleIframeMessage = function (event) {
-    console.log('received message event in iframe: ', event);
+    console.log("received message event in iframe: ", event);
     // Check if the message is requesting the content height
-    if (event.data === 'getHeight') {
-      console.log('message is requesting our iframe content height');
-      sendHeightToParent();
-    } 
+    if (event.data === "getHeight") sendHeightToParent();
   };
 
-  function handleRouteChangeStart(url) {
-    throw new Error('Abort route change while previewing block');
+  function handleRouteChangeStart() {
+    throw new Error("Abort route change while previewing block");
   }
 
   useEffect(() => {
-    if (typeof window !== 'undefined') { // prevents running the following client code on server
-      console.log('initial render of block preview')
-      // don't wait for parent to ask for iframe height, just send it (only on initial render)
+    // prevent running the following client code on server:
+    if (typeof window !== "undefined") {
+      // don't wait for parent to ask for iframe height, or for ResizeObserver to kick in, just send the height immediately on initial render
       sendHeightToParent();
 
+      // watch for document height resizes, and send new height to Gutenberg
+      let observer;
+      if (typeof document !== "undefined") {
+        observer = new ResizeObserver((entries) => {
+          // detected height change for document.documentElement
+          const newHeight = parseInt(
+            entries?.[0]?.contentBoxSize?.[0].blockSize?.toFixed(0)
+          );
+          if (previewHeight != newHeight) {
+            console.log("ResizeObserver detected new document height");
+            setPreviewHeight(newHeight);
+            sendHeightToParent(newHeight);
+          }
+        });
+        observer.observe(document.documentElement);
+      }
+
       // Add a message event listener to receive messages from the parent website (i.e. WordPress Gutenberg Editor)
-      window.addEventListener('message', handleIframeMessage);
+      window.addEventListener("message", handleIframeMessage);
 
       // Disable page transitions so that clicking links in iframe preview doesn't navigate editor away from preview route
-      router.events.on('routeChangeStart', handleRouteChangeStart);
+      router.events.on("routeChangeStart", handleRouteChangeStart);
 
       // Cleanup function to remove event listeners
       return () => {
-        window.removeEventListener('message', handleIframeMessage);
-        router.events.off('routeChangeStart', handleRouteChangeStart);
+        window.removeEventListener("message", handleIframeMessage);
+        router.events.off("routeChangeStart", handleRouteChangeStart);
+        observer?.disconnect();
       };
     }
   }, []);
@@ -56,7 +76,7 @@ export function BlockPreviewPage({ blockData }) {
   return (
     <>
       <Head>
-        <title>{`Preview Block: ${blockData.blockName}`}</title>
+        <title>{`Preview Block: ${blockData.name}`}</title>
       </Head>
       <div id="previewBlock">
         <Blocks data={[blockData]} blocks={{}} container={{}} />
@@ -70,25 +90,22 @@ export function getServerSideProps(ctx) {
     query: { blockData = null, secret = null },
   } = ctx;
 
-  const config = useGlobalConfig();
-
-  if (!blockData || secret != config.sources.default.secret) {
+  if (!blockData || secret != process.env.CLOAKWP_AUTH_SECRET) {
     // if someone visits this route without passing blockData or the correct secret, we redirect them to the homepage
     return {
       redirect: {
-        destination: '/',
+        destination: "/",
         permanent: false,
       },
     };
   }
 
-  // TODO: do I need to run decodeURI() on blockData?
   let data = JSON.parse(blockData);
 
   return {
     props: {
       blockData: data,
-      enableLayout: false
+      enableLayout: false,
     },
   };
 }

@@ -6,9 +6,14 @@ export async function getPreviewData(previewParams) {
   let data
   if(revisionId){
     data = await useFetchRestAPI(`/${postTypeRestEndpoint}/${postId}/revisions/${revisionId}`);
+  } else {
+    // if no revisionId is provided, we fetch all revisions and return the latest one
+    data = await useFetchRestAPI(`/${postTypeRestEndpoint}/${postId}/revisions/`);
+    data = Array.isArray(data) ? data[0] : data
   }
   
-  if(!revisionId || !data || data?.data?.status == 404) { // sometimes someone is previewing a post with no revisions, so we just show them the published data:
+  // If no revision is found for the given revisionId, we fetch and show the published post data instead:
+  if(!data || data?.data?.status == 404) {
     data = await useFetchRestAPI(`/${postTypeRestEndpoint}/${postId}`);
   }
 

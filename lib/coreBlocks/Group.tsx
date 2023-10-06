@@ -5,11 +5,11 @@ import { useBlockStyleBuilder } from "../hooks/useBlockStyleBuilder"
 import { classNames } from "../utils/classNames"
 
 export default function Group({block}) {
-    const {classes, styles} = useBlockStyleBuilder(block.data)
+    const {classes, styles} = useBlockStyleBuilder(block)
 
     if(!block?.data?.innerBlocks) return <></>
 
-    const { layout, align } = block.data.attrs
+    const { layout, align } = block.attrs
     const numBlocks = block?.data?.innerBlocks?.length
 
     const groupClasses = classNames(

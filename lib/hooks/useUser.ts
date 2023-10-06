@@ -1,16 +1,28 @@
-import { getCookie } from 'cookies-next';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import { getCloakConfig } from "../config";
 
-export function useUser(options = {}) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  
+export function useUser() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   useEffect(() => {
-    const loggedIn = getCookie('cloakwp-logged-in', options);
-    setIsLoggedIn(loggedIn)
-  }, [])
-  
+    const getLoginStatus = async () => {
+      const { apiRouterBasePath } = getCloakConfig();
+      const response = await fetch(
+        `/api/${apiRouterBasePath}/is-authenticated`,
+        {
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+
+      setIsLoggedIn(data === true ? true : false);
+    };
+
+    getLoginStatus();
+  }, []);
+
   return {
     isLoggedIn,
     // in future add other WP user data here if a WordPress admin user is logged in
-  }
+  };
 }

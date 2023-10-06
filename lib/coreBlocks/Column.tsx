@@ -4,7 +4,7 @@ import { classNames } from "../utils/classNames";
 
 export default function Column({block, width, index, numColumns, className}) {
     // console.log('** column block: ', block)
-    const {classes, styles} = useBlockStyleBuilder(block.data)
+    const {classes, styles} = useBlockStyleBuilder(block)
 
     let colSpan = 6 // default to 50% if no column width is defined
     

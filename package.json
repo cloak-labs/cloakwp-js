@@ -16,7 +16,16 @@
     "type": "git",
     "url": "git+https://github.com/cloak-labs/cloakwp.git"
   },
-  "keywords": ["wordpress", "wp", "cloakwp", "cloak", "headless", "nextjs", "next", "decoupled"],
+  "keywords": [
+    "wordpress",
+    "wp",
+    "cloakwp",
+    "cloak",
+    "headless",
+    "nextjs",
+    "next",
+    "decoupled"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -24,18 +33,22 @@
   },
   "homepage": "https://github.com/cloak-labs/cloakwp#readme",
   "devDependencies": {
-    "@types/node": "^18.11.9",
-    "@types/react": "^18.0.25",
-    "@types/react-dom": "^18.0.9",
-    "tailwind-merge": "^0.8.1",
+    "@types/node": "^18.18.1",
+    "@types/react": "^18.2.23",
+    "@types/react-dom": "^18.2.8",
+    "tailwind-merge": "^0.8.2",
     "tsc-watch": "^5.0.3",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.5"
   },
   "peerDependencies": {
-    "cookies-next": ">= 2.1.0",
     "html-react-parser": "3.x",
     "next": ">= 12.3",
     "react": ">= 17.0.2",
     "react-dom": ">= 17.0.2"
+  },
+  "dependencies": {
+    "cookies-next": "4.0.0",
+    "superagent": "^8.1.2",
+    "wpapi": "workspace:*"
   }
 }

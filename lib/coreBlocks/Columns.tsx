@@ -7,8 +7,8 @@ import Column from "./Column";
 import Block from "../Block";
 
 export default function Columns({ block }) {
-  const { classes, styles } = useBlockStyleBuilder(block.data);
-  const columns = block.data.innerBlocks;
+  const { classes, styles } = useBlockStyleBuilder(block);
+  const columns = block.innerBlocks;
   const numColumns = columns.length;
   let columnWidths = columns.map((col) => {
     const widthVal = parseFloat(col.attrs.width);
