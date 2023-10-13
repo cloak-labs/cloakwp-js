@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-export function BlockPreviewPage({ blockData }) {
+export default function BlockPreviewPage({ blockData }) {
   const [previewHeight, setPreviewHeight] = useState(getHeight);
   const router = useRouter();
 
@@ -79,7 +79,7 @@ export function BlockPreviewPage({ blockData }) {
         <title>{`Preview Block: ${blockData.name}`}</title>
       </Head>
       <div id="previewBlock">
-        <Blocks data={[blockData]} blocks={{}} container={{}} />
+        <Blocks data={[blockData]} />
       </div>
     </>
   );
