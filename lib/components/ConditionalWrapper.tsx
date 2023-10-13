@@ -1,7 +1,21 @@
-// Code taken from: https://blog.hackages.io/conditionally-wrap-an-element-in-react-a8b9a47fab2
-const ConditionalWrapper = ({ condition, wrapper, children, args }) => {
-    const passesCondition = (typeof condition === "function") ? condition() : condition 
-    return passesCondition ? wrapper(children, args) : children
+import { ReactElement } from "react";
+
+export interface ConditionalWrapperProps {
+  condition: (() => boolean) | boolean;
+  wrapper: (children: ReactElement, args: any) => ReactElement;
+  children: ReactElement;
+  args?: any;
 }
 
-export default ConditionalWrapper
+const ConditionalWrapper = ({
+  condition,
+  wrapper,
+  children,
+  args,
+}: ConditionalWrapperProps) => {
+  const passesCondition =
+    typeof condition === "function" ? condition() : condition;
+  return passesCondition ? wrapper(children, args) : children;
+};
+
+export default ConditionalWrapper;
