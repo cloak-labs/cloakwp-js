@@ -51,6 +51,7 @@ export default class WPInstance {
     );
 
     wpapi.isLoggedIn = wpapi.registerRoute("jwt-auth/v1", "/is-logged-in");
+    wpapi.frontpage = wpapi.registerRoute("cloakwp", "/frontpage");
 
     if (jwt) {
       // add JWT authentication globally for all requests -- this API client should therefore only ever be used server-side so as to not expose the JWT value to the browser
