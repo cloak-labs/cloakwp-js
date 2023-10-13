@@ -61,11 +61,13 @@ export default function Columns({ block }) {
         <Fragment key={i}>
           <Block
             block={column}
-            parentBlock={block.data}
+            parentBlock={block}
             isNested={true}
-            index={i}
-            width={columnWidths[i]}
-            numColumns={numColumns}
+            props={{
+              index: i,
+              width: columnWidths[i],
+              numColumns: numColumns,
+            }}
           />
           {/* <Column column={column} index={i} width={columnWidths[i]} numColumns={numColumns} /> */}
         </Fragment>
