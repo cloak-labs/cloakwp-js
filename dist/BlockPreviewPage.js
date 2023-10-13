@@ -11,7 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getServerSideProps = exports.BlockPreviewPage = void 0;
+exports.getServerSideProps = void 0;
 var jsx_runtime_1 = require("react/jsx-runtime");
 var Blocks_1 = require("./Blocks");
 var head_1 = require("next/head");
@@ -80,9 +80,9 @@ function BlockPreviewPage(_a) {
             };
         }
     }, []);
-    return ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)(head_1.default, { children: (0, jsx_runtime_1.jsx)("title", { children: "Preview Block: ".concat(blockData.name) }) }), (0, jsx_runtime_1.jsx)("div", __assign({ id: "previewBlock" }, { children: (0, jsx_runtime_1.jsx)(Blocks_1.default, { data: [blockData], blocks: {}, container: {} }) }))] }));
+    return ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)(head_1.default, { children: (0, jsx_runtime_1.jsx)("title", { children: "Preview Block: ".concat(blockData.name) }) }), (0, jsx_runtime_1.jsx)("div", __assign({ id: "previewBlock" }, { children: (0, jsx_runtime_1.jsx)(Blocks_1.default, { data: [blockData] }) }))] }));
 }
-exports.BlockPreviewPage = BlockPreviewPage;
+exports.default = BlockPreviewPage;
 function getServerSideProps(ctx) {
     var _a = ctx.query, _b = _a.blockData, blockData = _b === void 0 ? null : _b, _c = _a.secret, secret = _c === void 0 ? null : _c;
     if (!blockData || secret != process.env.CLOAKWP_AUTH_SECRET) {

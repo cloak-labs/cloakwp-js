@@ -29,16 +29,14 @@ var useUser_1 = require("../hooks/useUser");
 var icons_1 = require("./icons");
 var classNames_1 = require("../utils/classNames");
 var config_1 = require("../config");
-var config_2 = require("next/config");
 var GlobalsContext_1 = require("../context/GlobalsContext");
 function AdminBar(_a) {
     var _b, _c;
     var _d = _a.alwaysVisible, alwaysVisible = _d === void 0 ? false : _d, className = _a.className, props = __rest(_a, ["alwaysVisible", "className"]);
     var _e = (0, GlobalsContext_1.useGlobals)(), pageData = _e.pageData, isPreview = _e.isPreview;
     var _f = (0, useUser_1.useUser)().isLoggedIn, isLoggedIn = _f === void 0 ? false : _f;
-    var apiRouterBasePath = (0, config_2.default)().apiRouterBasePath;
+    var apiRouterBasePath = (0, config_1.getCloakConfig)().apiRouterBasePath;
     var _g = (0, config_1.getWpInstance)().settings(), url = _g.url, adminPath = _g.adminPath;
-    console.log({ url: url, adminPath: adminPath });
     var status = (_c = (_b = {
         publish: "published",
         draft: "draft",

@@ -33,8 +33,7 @@ var react_1 = require("react");
 var GlobalsContext = (0, react_1.createContext)({});
 var GlobalsProvider = function (_a) {
     var children = _a.children, props = __rest(_a, ["children"]);
-    return ((0, jsx_runtime_1.jsx)(GlobalsContext.Provider, __assign({ value: __assign({}, props // data from ACF Options page(s)
-        ) }, { children: children })));
+    return ((0, jsx_runtime_1.jsx)(GlobalsContext.Provider, __assign({ value: __assign({}, props) }, { children: children })));
 };
 exports.GlobalsProvider = GlobalsProvider;
 var useGlobals = function () { return (0, react_1.useContext)(GlobalsContext); };

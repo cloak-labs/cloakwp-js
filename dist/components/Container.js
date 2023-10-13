@@ -26,8 +26,8 @@ var jsx_runtime_1 = require("react/jsx-runtime");
 var classNames_1 = require("../utils/classNames");
 function Container(_a) {
     var className = _a.className, innerClassName = _a.innerClassName, children = _a.children, props = __rest(_a, ["className", "innerClassName", "children"]);
-    var defaultInnerClassNames = 'px-4 sm:px-6 lg:px-9 mx-auto max-w-7xl lg:max-w-8xl';
-    var hasBgColor = (className === null || className === void 0 ? void 0 : className.includes('bg-')) || false;
-    return ((0, jsx_runtime_1.jsx)("div", __assign({ className: (0, classNames_1.classNames)(!hasBgColor && defaultInnerClassNames, !hasBgColor && innerClassName, className), "data-cloakwp-container": "true" }, props, { children: hasBgColor ? ((0, jsx_runtime_1.jsx)("div", __assign({ className: (0, classNames_1.classNames)(defaultInnerClassNames, innerClassName) }, { children: children }))) : children })));
+    var defaultInnerClassNames = "px-4 sm:px-6 lg:px-9 mx-auto max-w-7xl lg:max-w-8xl";
+    var hasBgColor = (className === null || className === void 0 ? void 0 : className.includes("bg-")) || false;
+    return ((0, jsx_runtime_1.jsx)("div", __assign({ className: (0, classNames_1.classNames)(!hasBgColor && defaultInnerClassNames, !hasBgColor && innerClassName, className), "data-cloakwp-container": "true" }, props, { children: hasBgColor ? ((0, jsx_runtime_1.jsx)("div", __assign({ className: (0, classNames_1.classNames)(defaultInnerClassNames, innerClassName) }, { children: children }))) : (children) })));
 }
 exports.default = Container;

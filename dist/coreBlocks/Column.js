@@ -21,12 +21,17 @@ function Column(_a) {
     // console.log('** column block: ', block)
     var _d = (0, useBlockStyleBuilder_1.useBlockStyleBuilder)(block), classes = _d.classes, styles = _d.styles;
     var colSpan = 6; // default to 50% if no column width is defined
-    if (width) { // given a percentage width, we need to find the closest matching column width from our 12-column grid system (i.e. 50% == col-span-6, and 52% also == col-span-6)
-        var gridColWidths = [8.333, 16.667, 25, 33.333, 41.667, 50, 58.333, 66.667, 75, 83.333, 91.667, 100];
+    if (width) {
+        // given a percentage width, we need to find the closest matching column width from our 12-column grid system (i.e. 50% == col-span-6, and 52% also == col-span-6)
+        var gridColWidths = [
+            8.333, 16.667, 25, 33.333, 41.667, 50, 58.333, 66.667, 75, 83.333, 91.667,
+            100,
+        ];
         var lastDiff = 101;
         for (var i = 0; i < gridColWidths.length; i++) {
             var gridColWidth = gridColWidths[i];
-            if (width == gridColWidth) { // if we find an exact match, that makes our life easy and we can break out of the loop
+            if (width == gridColWidth) {
+                // if we find an exact match, that makes our life easy and we can break out of the loop
                 colSpan = i + 1;
                 break;
             }
@@ -39,6 +44,6 @@ function Column(_a) {
             lastDiff = diff;
         }
     }
-    return ((0, jsx_runtime_1.jsx)("div", __assign({ className: (0, classNames_1.classNames)('flex flex-col', "col-span-".concat(colSpan), numColumns == 2 && 'space-y-3', (numColumns > 2 && numColumns <= 4) && 'space-y-2', (numColumns > 4 && numColumns <= 6) && 'space-y-1', numColumns > 6 && 'space-y-0.5', classes, className), style: styles, "data-cloakwp-column": "true" }, { children: (_c = (_b = block === null || block === void 0 ? void 0 : block.data) === null || _b === void 0 ? void 0 : _b.innerBlocks) === null || _c === void 0 ? void 0 : _c.map(function (innerBlock, index) { return (0, jsx_runtime_1.jsx)(Block_1.default, { block: innerBlock, parentBlock: block, isNested: true }, index); }) })));
+    return ((0, jsx_runtime_1.jsx)("div", __assign({ className: (0, classNames_1.classNames)("flex flex-col", "col-span-".concat(colSpan), numColumns == 2 && "space-y-3", numColumns > 2 && numColumns <= 4 && "space-y-2", numColumns > 4 && numColumns <= 6 && "space-y-1", numColumns > 6 && "space-y-0.5", classes, className), style: styles, "data-cloakwp-column": "true" }, { children: (_c = (_b = block === null || block === void 0 ? void 0 : block.data) === null || _b === void 0 ? void 0 : _b.innerBlocks) === null || _c === void 0 ? void 0 : _c.map(function (innerBlock, index) { return ((0, jsx_runtime_1.jsx)(Block_1.default, { block: innerBlock, parentBlock: block, isNested: true }, index)); }) })));
 }
 exports.default = Column;

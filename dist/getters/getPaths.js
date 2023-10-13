@@ -1,4 +1,5 @@
 "use strict";
+// import { getPosts } from "./getPosts";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -37,20 +38,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPaths = void 0;
-var getPosts_1 = require("./getPosts");
 function getPaths(postType) {
-    if (postType === void 0) { postType = 'pages'; }
+    if (postType === void 0) { postType = "pages"; }
     return __awaiter(this, void 0, void 0, function () {
-        var posts;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, (0, getPosts_1.getPosts)(postType, {
-                        queryParams: { '_fields': 'pathname' }
-                    })];
-                case 1:
-                    posts = _a.sent();
-                    return [2 /*return*/, (posts === null || posts === void 0 ? void 0 : posts.map(function (post) { return post.pathname; })) || []];
-            }
+            // TODO: replace with new WPAPI approach
+            return [2 /*return*/, ["/", "/blog"]];
         });
     });
 }

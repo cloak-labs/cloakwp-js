@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -46,49 +35,39 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPreviewData = void 0;
-var useFetchRestAPI_1 = require("../hooks/useFetchRestAPI");
-function getPreviewData(previewParams) {
-    var _a;
+var config_1 = require("../config");
+var WPAPI = require("wpapi/fetch");
+function getPreviewData(previewParams, serverApiClient) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function () {
-        var _b, _c, revisionId, postId, postTypeRestEndpoint, rest, data;
+        var _c, revisionId, postId, postTypeRestEndpoint, wp, page, revision, pageData;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    _b = previewParams.post, _c = _b.revisionId, revisionId = _c === void 0 ? null : _c, postId = _b.postId, postTypeRestEndpoint = _b.postTypeRestEndpoint, rest = __rest(_b, ["revisionId", "postId", "postTypeRestEndpoint"]);
+                    _c = previewParams.revisionId, revisionId = _c === void 0 ? null : _c, postId = previewParams.postId, postTypeRestEndpoint = previewParams.postTypeRestEndpoint;
+                    wp = serverApiClient !== null && serverApiClient !== void 0 ? serverApiClient : (0, config_1.getWpInstance)().serverApi();
+                    page = (_a = wp[postTypeRestEndpoint]) === null || _a === void 0 ? void 0 : _a.call(wp).id(postId);
                     if (!revisionId) return [3 /*break*/, 2];
-                    return [4 /*yield*/, (0, useFetchRestAPI_1.useFetchRestAPI)("/".concat(postTypeRestEndpoint, "/").concat(postId, "/revisions/").concat(revisionId))];
+                    return [4 /*yield*/, page.revisions(revisionId).get()];
                 case 1:
-                    data = _d.sent();
+                    revision = _d.sent();
                     return [3 /*break*/, 4];
-                case 2: return [4 /*yield*/, (0, useFetchRestAPI_1.useFetchRestAPI)("/".concat(postTypeRestEndpoint, "/").concat(postId, "/revisions/"))];
+                case 2: return [4 /*yield*/, page.revisions().single().get()];
                 case 3:
-                    // if no revisionId is provided, we fetch all revisions and return the latest one
-                    data = _d.sent();
-                    data = Array.isArray(data) ? data[0] : data;
+                    // get most recent revision if no revisionId is provided:
+                    revision = _d.sent();
                     _d.label = 4;
                 case 4:
-                    if (!(!data || ((_a = data === null || data === void 0 ? void 0 : data.data) === null || _a === void 0 ? void 0 : _a.status) == 404)) return [3 /*break*/, 6];
-                    return [4 /*yield*/, (0, useFetchRestAPI_1.useFetchRestAPI)("/".concat(postTypeRestEndpoint, "/").concat(postId))];
+                    pageData = revision;
+                    if (!(!revision || ((_b = revision === null || revision === void 0 ? void 0 : revision.data) === null || _b === void 0 ? void 0 : _b.status) == 404)) return [3 /*break*/, 6];
+                    return [4 /*yield*/, page.get()];
                 case 5:
-                    data = _d.sent();
+                    // If no revision is found, we fetch and show the published post data instead:
+                    pageData = _d.sent();
                     _d.label = 6;
-                case 6: return [2 /*return*/, {
-                        data: data,
-                        params: __assign({ revisionId: revisionId, postId: postId, postTypeRestEndpoint: postTypeRestEndpoint }, rest)
-                    }];
+                case 6: return [2 /*return*/, pageData];
             }
         });
     });

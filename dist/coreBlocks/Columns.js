@@ -48,6 +48,10 @@ function Columns(_a) {
                     numColumns <= 4 &&
                     "gap-6 lg:gap-8 grid-cols-1 sm:grid-cols-8 lg:grid-cols-12", numColumns > 4 &&
                     numColumns <= 6 &&
-                    "gap-3 lg:gap-4 grid-cols-1 xs:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12", numColumns > 6 && "gap-2 lg:gap-3 grid-cols-1 sm:grid-cols-12") }, { children: children })) }))); } }, { children: columns === null || columns === void 0 ? void 0 : columns.map(function (column, i) { return ((0, jsx_runtime_1.jsx)(react_1.Fragment, { children: (0, jsx_runtime_1.jsx)(Block_1.default, { block: column, parentBlock: block.data, isNested: true, index: i, width: columnWidths[i], numColumns: numColumns }) }, i)); }) })));
+                    "gap-3 lg:gap-4 grid-cols-1 xs:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12", numColumns > 6 && "gap-2 lg:gap-3 grid-cols-1 sm:grid-cols-12") }, { children: children })) }))); } }, { children: columns === null || columns === void 0 ? void 0 : columns.map(function (column, i) { return ((0, jsx_runtime_1.jsx)(react_1.Fragment, { children: (0, jsx_runtime_1.jsx)(Block_1.default, { block: column, parentBlock: block, isNested: true, props: {
+                    index: i,
+                    width: columnWidths[i],
+                    numColumns: numColumns,
+                } }) }, i)); }) })));
 }
 exports.default = Columns;

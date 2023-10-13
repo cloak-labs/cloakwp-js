@@ -27,6 +27,6 @@ var BlockConfigProvider = function (_a) {
         containerCondition: containerCondition !== null && containerCondition !== void 0 ? containerCondition : prevContainerCondition,
         blocks: merge ? (0, deepMerge_1.deepMerge)(prevBlocks, blocks) : blocks !== null && blocks !== void 0 ? blocks : prevBlocks,
     };
-    return ((0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, { children: isNewConfig ? ((0, jsx_runtime_1.jsx)(exports.BlockConfigContext.Provider, __assign({ value: config }, { children: children }))) : children }));
+    return ((0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, { children: isNewConfig ? ((0, jsx_runtime_1.jsx)(exports.BlockConfigContext.Provider, __assign({ value: config }, { children: children }))) : (children) }));
 };
 exports.default = BlockConfigProvider;

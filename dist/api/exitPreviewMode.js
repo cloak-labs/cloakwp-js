@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var stripTrailingSlash_1 = require("../utils/stripTrailingSlash");
 function exitPreviewMode(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var pathname;
@@ -52,6 +53,7 @@ function exitPreviewMode(req, res) {
           
                     * Therefore, using cloakwp's preview feature requires using Next v12.3.0 or greater
             */
+            pathname = (0, stripTrailingSlash_1.default)(pathname); // important to remove trailing slash so preview cookies kick in on correct page
             res.clearPreviewData({ path: pathname });
             // Redirect the user back to the same page they were just previewing -- they'll now see the published version.
             res.writeHead(307, { Location: pathname });

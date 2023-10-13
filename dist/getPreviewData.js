@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -47,29 +36,40 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPost = void 0;
-var getQueryParamsString_1 = require("../utils/getQueryParamsString");
-var useFetchRestAPI_1 = require("../hooks/useFetchRestAPI");
-function getPost(_a) {
-    var _b = _a.postType, postType = _b === void 0 ? 'posts' : _b, slug = _a.slug, id = _a.id, _c = _a.queryParams, queryParams = _c === void 0 ? '' : _c, _d = _a.fetchOptions, fetchOptions = _d === void 0 ? {} : _d;
+exports.getPreviewData = void 0;
+var config_1 = require("./config");
+var WPAPI = require("wpapi/fetch");
+function getPreviewData(previewParams, serverApiClient) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function () {
-        var endpoint, queryParamsString, data;
-        return __generator(this, function (_e) {
-            switch (_e.label) {
+        var _c, revisionId, postId, postTypeRestEndpoint, wp, page, revision, pageData;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
-                    if (id)
-                        endpoint = "/".concat(postType, "/").concat(id);
-                    else
-                        endpoint = (slug && slug != '/') ? "/".concat(postType, "?slug=").concat(slug) : "/frontpage";
-                    queryParamsString = (0, getQueryParamsString_1.getQueryParamsString)(queryParams, endpoint);
-                    return [4 /*yield*/, (0, useFetchRestAPI_1.useFetchRestAPI)("".concat(endpoint).concat(queryParamsString), __assign({ includeJwt: false }, fetchOptions))];
+                    _c = previewParams.revisionId, revisionId = _c === void 0 ? null : _c, postId = previewParams.postId, postTypeRestEndpoint = previewParams.postTypeRestEndpoint;
+                    wp = serverApiClient !== null && serverApiClient !== void 0 ? serverApiClient : (0, config_1.getWpInstance)().serverApi();
+                    page = (_a = wp[postTypeRestEndpoint]) === null || _a === void 0 ? void 0 : _a.call(wp).id(postId);
+                    if (!revisionId) return [3 /*break*/, 2];
+                    return [4 /*yield*/, page.revisions(revisionId).get()];
                 case 1:
-                    data = _e.sent();
-                    if (Array.isArray(data))
-                        data = data[0];
-                    return [2 /*return*/, { data: data }];
+                    revision = _d.sent();
+                    return [3 /*break*/, 4];
+                case 2: return [4 /*yield*/, page.revisions().single().get()];
+                case 3:
+                    // get most recent revision if no revisionId is provided:
+                    revision = _d.sent();
+                    _d.label = 4;
+                case 4:
+                    pageData = revision;
+                    if (!(!revision || ((_b = revision === null || revision === void 0 ? void 0 : revision.data) === null || _b === void 0 ? void 0 : _b.status) == 404)) return [3 /*break*/, 6];
+                    return [4 /*yield*/, page.get()];
+                case 5:
+                    // If no revision is found, we fetch and show the published post data instead:
+                    pageData = _d.sent();
+                    _d.label = 6;
+                case 6: return [2 /*return*/, pageData];
             }
         });
     });
 }
-exports.getPost = getPost;
+exports.getPreviewData = getPreviewData;
