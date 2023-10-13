@@ -2,17 +2,14 @@ import Button from "./Button";
 import { useUser } from "../hooks/useUser";
 import { HomeIcon, EditIcon } from "./icons";
 import { classNames } from "../utils/classNames";
-import { getWpInstance } from "../config";
-import getConfig from "next/config";
+import { getCloakConfig, getWpInstance } from "../config";
 import { useGlobals } from "../context/GlobalsContext";
 
 export function AdminBar({ alwaysVisible = false, className, ...props }) {
   const { pageData, isPreview } = useGlobals();
   let { isLoggedIn = false } = useUser();
-  const { apiRouterBasePath } = getConfig();
+  const { apiRouterBasePath } = getCloakConfig();
   const { url, adminPath } = getWpInstance().settings();
-
-  console.log({ url, adminPath });
 
   const status =
     {

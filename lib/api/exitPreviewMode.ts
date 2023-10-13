@@ -1,5 +1,7 @@
+import stripTrailingSlash from "../utils/stripTrailingSlash";
+
 export default async function exitPreviewMode(req, res) {
-  const { pathname } = req.query;
+  let { pathname } = req.query;
 
   /* Exit the current user from "Preview Mode".
      Note: we pass in an options object with path == the path of the page we were previewing. 
@@ -12,11 +14,11 @@ export default async function exitPreviewMode(req, res) {
 
           * Therefore, using cloakwp's preview feature requires using Next v12.3.0 or greater 
   */
-  
-  
-  res.clearPreviewData({ path: pathname })
+
+  pathname = stripTrailingSlash(pathname); // important to remove trailing slash so preview cookies kick in on correct page
+  res.clearPreviewData({ path: pathname });
 
   // Redirect the user back to the same page they were just previewing -- they'll now see the published version.
-  res.writeHead(307, { Location: pathname })
-  res.end()
+  res.writeHead(307, { Location: pathname });
+  res.end();
 }
