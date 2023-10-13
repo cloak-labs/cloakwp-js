@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext } from "react";
 
 /*
   A fairly generic Global Context utility that allows CloakWP users to wrap their app with <GlobalsProvider>, 
@@ -6,13 +6,14 @@ import { createContext, useContext } from 'react';
   Common use-cases include passing in menu data and ACF Options data.
 */
 
-const GlobalsContext = createContext({});
+const GlobalsContext = createContext({} as any);
 
 export const GlobalsProvider = ({ children, ...props }) => {
   return (
     <GlobalsContext.Provider
-      value={{ // the values we provide here will be available from the useGlobals hook from anywhere in the app -- gets rid of prop drilling
-        ...props // data from ACF Options page(s)
+      value={{
+        // the values we provide here will be available from the useGlobals hook from anywhere in the app -- gets rid of prop drilling
+        ...(props as any), // any data you want, such as ACF Options page data, header/footer data, pageData, etc.
       }}
     >
       {children}
