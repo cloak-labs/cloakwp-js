@@ -17,34 +17,33 @@ import ConditionalWrapper from "./components/ConditionalWrapper";
 import { classNames } from "./utils/classNames";
 import { deepMerge } from "./utils/deepMerge";
 import { useBlockConfig } from "./hooks/useBlockConfig";
+import { BlockComponentProps } from "./types";
 
 export default function Block({
-  block,
+  block, // individual block data from REST API
   // blockConfig, at some point in future, allow this prop to override the blockConfig on a per-block basis by conditionally wrapping the rendered block with another <BlockConfigProvider />
   isNested = false,
   parentBlock,
-  containerClasses = "",
   container, // dev has the ability to override the default container function -- this prop is only useful when dev is explicitly rendering <Block /> (not common) --> <Blocks /> does not pass 'container' to Block as prop, instead it uses context (see useBlockConfig() below)
   containerCondition, // dev has the ability to override the default condition that determines whether to wrap a block with a container -- this prop is only useful when dev is explicitly rendering <Block /> (not common) --> <Blocks /> does not pass 'container' to Block as prop, instead it uses context (see useBlockConfig() below)
   prevSibling, // the block data for the current block's previous sibling block
   nextSibling, // the block data for the current block's next sibling block
-  dataSource = "default", // the key of the WP data source where this block's data came from -- we pass this into the Block's component so users can render things conditionally based on the data source
-  ...props
-}) {
+  props,
+}: BlockComponentProps) {
   const {
     container: globalCustomContainer,
     containerCondition: globalCustomContainerCondition,
     blocks: blockConfig,
   } = useBlockConfig();
 
-  const SmallContainer = ({ block }) => (
+  const SmallContainer = ({ block, children }) => (
     <Container
       innerClassName={classNames(
         "max-w-3xl lg:max-w-4xl",
         block.config.containerClasses
       )}
     >
-      {block.rendered}
+      {children}
     </Container>
   );
 
@@ -54,11 +53,11 @@ export default function Block({
     defaults via props or context (when using our <BlockConfigProvider>)
   */
   const defaults = {
-    container: ({ block }) => (
+    container: ({ block, children }) => (
       <Container
         className={classNames("relative", block.config.containerClasses)}
       >
-        {block.rendered}
+        {children}
       </Container>
     ),
     containerCondition: ({ block }) => !block.isNested,
@@ -133,17 +132,18 @@ export default function Block({
     return <></>;
   }
 
+  // an array of all the possible containers to use for this Block, where index 0 takes highest priority
   const possibleContainers = [
-    // an array of all the possible containers to use for this Block, where index 0 takes highest priority
     container, // container prop on <Block /> -- a rare case where dev is explicitly rendering <Block /> rather than <Blocks /> and passing a 'container' prop (highest priority)
     blockConfig[block.name]?.container, // container specified in blockConfig for this specific block (2nd priority)
     globalCustomContainer, // container prop on <Blocks /> or nearest BlockConfigProvider context (3rd priority)
     defaults.blocks[block.name]?.container, // default container specified by cloakwp for this specific block (4th priority)
     defaults.container, // default global container specified by cloakwp (last priority)
   ]; // note: there are 4 ways for package users to provide a custom container (and a default container provided by us)
-  const finalContainer = possibleContainers.filter(
+
+  const finalContainer = possibleContainers.find(
     (cntr) => typeof cntr == "function"
-  )[0]; // filter out non-component & non-boolean containers, then pick off the 1st one (smallest index == highest priority)
+  ); // find the first container that is a valid component
 
   let containerEnabled = true;
   possibleContainers.every((cntr, index) => {
@@ -156,20 +156,21 @@ export default function Block({
     if (typeof cntr == "function") {
       return false; // we found a container function before we found a falsy value, which means we leave containerEnabled = true
     }
-    return true; // equivalent to 'continue;' and is required for 'every()'
+    return true; // equivalent to 'continue' and is required for 'every()'
   });
 
+  // same idea as 'possibleContainers' above ^ .. a container condition is a function that returns true/false to determine if this block gets rendered inside a container or not
   const possibleContainerConditions = [
-    // same idea as 'possibleContainers' above ^ .. a container condition is a function that returns true/false to determine if this block gets rendered inside a container or not
     containerCondition,
     blockConfig[block.name]?.containerCondition,
     globalCustomContainerCondition,
     defaults.blocks[block.name]?.containerCondition,
     defaults.containerCondition,
   ];
-  const finalContainerCondition = possibleContainerConditions.filter(
+
+  const finalContainerCondition = possibleContainerConditions.find(
     (condition) => typeof condition == "function"
-  )[0];
+  );
 
   const { component: Component, props: configProps = {} } = finalConfig;
   const finalProps = deepMerge(
@@ -198,17 +199,21 @@ export default function Block({
     <ConditionalWrapper
       condition={() =>
         containerEnabled
-          ? finalContainerCondition?.({ block: blockObj, finalProps })
+          ? finalContainerCondition?.({
+              block: blockObj,
+              blockProps: finalProps,
+            })
           : false
       }
       wrapper={(children) =>
         finalContainer?.({
-          block: { ...blockObj, rendered: children },
-          finalProps,
+          block: blockObj,
+          children,
+          blockProps: finalProps,
         })
       }
     >
-      <Component block={blockObj} dataSource={dataSource} {...finalProps} />
+      <Component block={blockObj} {...finalProps} />
     </ConditionalWrapper>
   );
 }
