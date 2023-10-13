@@ -8,7 +8,7 @@
     "dev": "tsc-silent -p tsconfig.json --suppress @ -w",
     "zzz-dev": "tsc-watch --onFailure \"echo Beep! Compilation Failed\" --noClear",
     "build": "npm run build-ts",
-    "build-ts": "tsc --noEmit",
+    "build-ts": "tsc-silent -p tsconfig.json --suppress",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "zzz-postpublish": "git push && git push --tags"
   },
@@ -47,8 +47,7 @@
     "react-dom": ">= 17.0.2"
   },
   "dependencies": {
-    "cookies-next": "4.0.0",
     "superagent": "^8.1.2",
-    "wpapi": "workspace:*"
+    "@cloakwp/wpapi": "workspace:*"
   }
 }
