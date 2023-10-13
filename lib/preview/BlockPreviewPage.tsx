@@ -1,4 +1,4 @@
-import Blocks from "./Blocks";
+import Blocks from "../Blocks";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";

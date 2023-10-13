@@ -57,9 +57,9 @@ Object.defineProperty(exports, "useBlockStyleBuilder", { enumerable: true, get: 
 var useUser_1 = require("./hooks/useUser");
 Object.defineProperty(exports, "useUser", { enumerable: true, get: function () { return useUser_1.useUser; } });
 // Preview mode
-var getPreviewData_1 = require("./getPreviewData");
+var getPreviewData_1 = require("./preview/getPreviewData");
 Object.defineProperty(exports, "getPreviewData", { enumerable: true, get: function () { return getPreviewData_1.getPreviewData; } });
-var BlockPreviewPage_1 = require("./BlockPreviewPage");
+var BlockPreviewPage_1 = require("./preview/BlockPreviewPage");
 Object.defineProperty(exports, "BlockPreviewPage", { enumerable: true, get: function () { return BlockPreviewPage_1.default; } });
 Object.defineProperty(exports, "BlockPreviewPageSSP", { enumerable: true, get: function () { return BlockPreviewPage_1.getServerSideProps; } });
 // Utils
