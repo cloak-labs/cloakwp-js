@@ -1,8 +1,21 @@
-import { classNames } from '../utils/classNames';
+import { ReactElement } from "react";
+import { classNames } from "../utils/classNames";
 
-export default function Container({ className, innerClassName, children, ...props }) {
-  const defaultInnerClassNames = 'px-4 sm:px-6 lg:px-9 mx-auto max-w-7xl lg:max-w-8xl'
-  const hasBgColor = className?.includes('bg-') || false
+export interface ContainerProps {
+  className?: string;
+  innerClassName?: string;
+  children?: ReactElement;
+}
+
+export default function Container({
+  className,
+  innerClassName,
+  children,
+  ...props
+}: ContainerProps) {
+  const defaultInnerClassNames =
+    "px-4 sm:px-6 lg:px-9 mx-auto max-w-7xl lg:max-w-8xl";
+  const hasBgColor = className?.includes("bg-") || false;
 
   return (
     <div
@@ -18,8 +31,9 @@ export default function Container({ className, innerClassName, children, ...prop
         <div className={classNames(defaultInnerClassNames, innerClassName)}>
           {children}
         </div>
-      ) : children
-      }
+      ) : (
+        children
+      )}
     </div>
-  )
+  );
 }
