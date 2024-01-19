@@ -1,4 +1,3 @@
-cloakwp.config.js
-/lib
+/src
 tsconfig.json
 .vscode

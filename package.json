@@ -1,11 +1,17 @@
 {
   "name": "cloakwp",
   "version": "0.3.8",
-  "description": "An NPM package for integrating WordPress into your NextJS front-end",
+  "description": "Integrate headless WordPress with your decoupled JS front-end.",
   "main": "dist/index",
-  "typings": "dist/cloakwp.d.ts",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
-    "dev": "tsc-silent -p tsconfig.json --suppress @ -w",
+    "dev": "tsc -p tsconfig.json -w",
     "zzz-dev": "tsc-watch --onFailure \"echo Beep! Compilation Failed\" --noClear",
     "build": "npm run build-ts",
     "build-ts": "tsc-silent -p tsconfig.json --suppress",
@@ -14,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cloak-labs/cloakwp.git"
+    "url": "git+https://github.com/cloak-labs/cloakwp-js.git"
   },
   "keywords": [
     "wordpress",
@@ -26,28 +32,23 @@
     "next",
     "decoupled"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "Kaelan Smith",
+  "license": "LGPL-3.0-only",
   "bugs": {
-    "url": "https://github.com/cloak-labs/cloakwp/issues"
+    "url": "https://github.com/cloak-labs/cloakwp-js/issues"
   },
-  "homepage": "https://github.com/cloak-labs/cloakwp#readme",
+  "homepage": "https://github.com/cloak-labs/cloakwp-js#readme",
   "devDependencies": {
     "@types/node": "^18.18.1",
-    "@types/react": "^18.2.23",
+    "@types/react": "18.2.37",
     "@types/react-dom": "^18.2.8",
-    "tailwind-merge": "^0.8.2",
     "tsc-watch": "^5.0.3",
-    "typescript": "^4.9.5"
-  },
-  "peerDependencies": {
-    "html-react-parser": "3.x",
-    "next": ">= 12.3",
-    "react": ">= 17.0.2",
-    "react-dom": ">= 17.0.2"
+    "typescript": "^5.3.2"
   },
   "dependencies": {
-    "superagent": "^8.1.2",
-    "@cloakwp/wpapi": "workspace:*"
+    "@cloakui/styles": "workspace:*",
+    "@cloakui/utils": "workspace:*",
+    "@cloakwp/wpapi": "workspace:*",
+    "cloakcms": "workspace:*"
   }
 }
