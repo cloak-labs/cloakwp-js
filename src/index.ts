@@ -9,7 +9,11 @@ export { WPBlockRenderer } from "./WPBlockRenderer";
 export { wpBlockStyleBuilder } from "./wpBlockStyleBuilder";
 
 // CMSInstance Plugins
-export { wpRestApiClient } from "./plugins/wpRestApiClient";
+export {
+  wpRestApiClient,
+  RestApiClientConfig,
+  ClientMutationFn,
+} from "./plugins/wpRestApiClient";
 export { registerCloakWPMethods } from "./plugins/registerCloakWPMethods";
 
 // Config

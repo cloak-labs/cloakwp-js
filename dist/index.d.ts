@@ -3,7 +3,7 @@ export { WPClient } from "./plugins/wpRestApiClient";
 export * from "cloakcms";
 export { WPBlockRenderer } from "./WPBlockRenderer";
 export { wpBlockStyleBuilder } from "./wpBlockStyleBuilder";
-export { wpRestApiClient } from "./plugins/wpRestApiClient";
+export { wpRestApiClient, RestApiClientConfig, ClientMutationFn, } from "./plugins/wpRestApiClient";
 export { registerCloakWPMethods } from "./plugins/registerCloakWPMethods";
 export { setCloakWPConfig, getCloakWPConfig } from "./CloakWPConfig";
 export { generateSitemap } from "./utils/generateSitemap";

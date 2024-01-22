@@ -5,10 +5,10 @@ declare const wpBlockClassBuilder: (props?: {
     marginBottom?: "none" | "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80";
     blockGapX?: "none" | "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80";
     blockGapY?: "none" | "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80";
-    verticalAlignment?: "default" | "center" | "bottom";
+    verticalAlignment?: "center" | "bottom" | "default";
     orientation?: "default" | "flex" | "horizontal" | "vertical";
-    justifyContent?: "default" | "center" | "right" | "space-between";
-    textTransform?: "none" | "uppercase" | "lowercase" | "capitalize";
+    justifyContent?: "space-between" | "center" | "right" | "default";
+    textTransform?: "none" | "capitalize" | "lowercase" | "uppercase";
     fontStyle?: "normal" | "italic";
     textDecoration?: "none" | "line-through" | "underline";
 } & ({
