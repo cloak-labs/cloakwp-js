@@ -4,9 +4,12 @@ export const isUserLoggedIn = async () => {
   const { apiRouterBasePath } = getCloakWPConfig();
 
   try {
-    const response = await fetch(`${apiRouterBasePath}/is-authenticated`, {
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${apiRouterBasePath}/is-authenticated?XDEBUG_TRIGGER`,
+      {
+        credentials: "include",
+      }
+    );
 
     if (!response.ok) {
       return false;

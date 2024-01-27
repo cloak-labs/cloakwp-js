@@ -5,7 +5,7 @@ const CloakWPConfig_1 = require("../CloakWPConfig");
 const isUserLoggedIn = async () => {
     const { apiRouterBasePath } = (0, CloakWPConfig_1.getCloakWPConfig)();
     try {
-        const response = await fetch(`${apiRouterBasePath}/is-authenticated`, {
+        const response = await fetch(`${apiRouterBasePath}/is-authenticated?XDEBUG_TRIGGER`, {
             credentials: "include",
         });
         if (!response.ok) {

@@ -128,6 +128,9 @@ const wpBlockStyleBuilder = (block) => {
     let blockGapY;
     let marginTop;
     let marginBottom;
+    if (block.name == "core/column") {
+        blockGapY = "var:preset|spacing|30"; // set default vertical spacing for column block
+    }
     const isSpacingPreset = (str) => str.startsWith("var:preset|spacing|");
     if (typeof blockGap == "string") {
         if (isSpacingPreset(blockGap))

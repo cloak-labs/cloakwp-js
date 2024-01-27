@@ -21,8 +21,9 @@ export const getDocumentHeight = () => {
 
 // When parent (i.e. WP Block Editor) sends message, handleWPBlockIframeMessage() handles it:
 export const handleWPBlockIframeMessage = (event, { onBlockDataReceipt }) => {
-  if (event.origin == getCMSInstance().url) {
-    console.log("received message event IN iframe: ", event);
+  const wpUrl = getCMSInstance().url;
+  if (wpUrl.startsWith(event.origin)) {
+    // console.log("received message event IN iframe: ", event);
     // Check if the message is requesting the content height
     if (event.data === "getHeight") {
       sendBlockHeightToWP();

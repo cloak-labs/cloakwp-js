@@ -23,8 +23,9 @@ const getDocumentHeight = () => {
 exports.getDocumentHeight = getDocumentHeight;
 // When parent (i.e. WP Block Editor) sends message, handleWPBlockIframeMessage() handles it:
 const handleWPBlockIframeMessage = (event, { onBlockDataReceipt }) => {
-    if (event.origin == (0, cloakcms_1.getCMSInstance)().url) {
-        console.log("received message event IN iframe: ", event);
+    const wpUrl = (0, cloakcms_1.getCMSInstance)().url;
+    if (wpUrl.startsWith(event.origin)) {
+        // console.log("received message event IN iframe: ", event);
         // Check if the message is requesting the content height
         if (event.data === "getHeight") {
             (0, exports.sendBlockHeightToWP)();
