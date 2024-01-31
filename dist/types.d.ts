@@ -95,7 +95,7 @@ export type WPDataRouter<TProps = EmptyObjectOrRecord, TBlockData = RestApiBlock
 export type WPGlobalDataRouter<TProps = EmptyObjectOrRecord, TBlockData = RestApiBlockData, TComponent = any> = GlobalDataRouter<TProps, TBlockData, TComponent>;
 export type WPSingleBlockConfigWithoutVariants<TComponent = any, TProps = EmptyObjectOrRecord, TBlockData = RestApiBlockData> = SingleBlockConfigWithoutVariants<TComponent, TProps, TBlockData>;
 export type WPVariantsRouter<TComponent = any, TBlockData = RestApiBlockData> = VariantsRouter<TComponent, TBlockData>;
-export type WPSingleBlockConfigWithVariants<TComponent = any, TBlockData = RestApiBlockData> = SingleBlockConfigWithVariants<TComponent, TBlockData>;
+export type WPSingleBlockConfigWithVariants<TComponent = any, TProps = EmptyObjectOrRecord, TBlockData = RestApiBlockData> = SingleBlockConfigWithVariants<TComponent, TProps, TBlockData>;
 export type WPSingleBlockConfig<TComponent = any, TBlockData = RestApiBlockData> = SingleBlockConfig<TComponent, TBlockData>;
 export type WPBlocksConfig<TComponent = any, TBlockData = RestApiBlockData> = BlocksConfig<TComponent, TBlockData>;
 export type WPBlockDataWithExtraContext<TComponent = any, TBlockData = RestApiBlockData> = BlockDataWithExtraContext<TComponent, TBlockData>;

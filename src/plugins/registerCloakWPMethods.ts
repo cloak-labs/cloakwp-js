@@ -27,5 +27,5 @@ export const registerCloakWPMethods = (incomingConfig: RestApiClientConfig) => {
         return client;
       },
     ],
-  };
+  } as RestApiClientConfig;
 };

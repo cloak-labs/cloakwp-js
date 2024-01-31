@@ -1,14 +1,14 @@
 import type { WPBlockDataWithExtraContext } from "./types";
 import { VariantProps } from "@cloakui/styles";
 declare const wpBlockClassBuilder: (props?: {
-    marginTop?: "none" | "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80";
-    marginBottom?: "none" | "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80";
-    blockGapX?: "none" | "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80";
-    blockGapY?: "none" | "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80";
-    verticalAlignment?: "default" | "center" | "bottom";
-    orientation?: "flex" | "default" | "horizontal" | "vertical";
-    justifyContent?: "default" | "center" | "right" | "space-between";
-    textTransform?: "none" | "capitalize" | "lowercase" | "uppercase";
+    marginTop?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none";
+    marginBottom?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none";
+    blockGapX?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none";
+    blockGapY?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none";
+    verticalAlignment?: "center" | "default" | "bottom";
+    orientation?: "default" | "flex" | "horizontal" | "vertical";
+    justifyContent?: "center" | "right" | "default" | "space-between";
+    textTransform?: "none" | "uppercase" | "lowercase" | "capitalize";
     fontStyle?: "normal" | "italic";
     textDecoration?: "none" | "line-through" | "underline";
 } & ({

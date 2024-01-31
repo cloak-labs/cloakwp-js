@@ -160,8 +160,9 @@ export type WPVariantsRouter<
 
 export type WPSingleBlockConfigWithVariants<
   TComponent = any,
+  TProps = EmptyObjectOrRecord,
   TBlockData = RestApiBlockData
-> = SingleBlockConfigWithVariants<TComponent, TBlockData>;
+> = SingleBlockConfigWithVariants<TComponent, TProps, TBlockData>;
 
 export type WPSingleBlockConfig<
   TComponent = any,
