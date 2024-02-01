@@ -46,9 +46,11 @@
     "typescript": "^5.3.2"
   },
   "dependencies": {
-    "@cloakui/styles": "^0.0.1",
     "@cloakui/utils": "^0.0.1",
     "@cloakwp/wpapi": "^2.0.0",
     "cloakcms": "^0.0.2"
+  },
+  "peerDependencies": {
+    "@cloakui/styles": ">= 0.1.0"
   }
 }
