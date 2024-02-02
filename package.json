@@ -51,6 +51,6 @@
     "cloakcms": "^0.0.2"
   },
   "peerDependencies": {
-    "@cloakui/styles": ">= 0.1.0"
+    "@cloakui/styles": ">= 0.2.0"
   }
 }
