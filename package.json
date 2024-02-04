@@ -48,7 +48,7 @@
   "dependencies": {
     "@cloakui/utils": "^0.0.1",
     "@cloakwp/wpapi": "^2.0.0",
-    "cloakcms": "^0.0.2"
+    "cloakcms": "^0.1.0"
   },
   "peerDependencies": {
     "@cloakui/styles": ">= 0.2.0"
