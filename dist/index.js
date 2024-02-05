@@ -29,7 +29,7 @@ Object.defineProperty(exports, "wpBlockStyleBuilder", { enumerable: true, get: f
 //   ClientMutationFn,
 //   WPClient
 // } from "./plugins/wpRestApiClient";
-// export { registerCloakWPMethods } from "./plugins/registerCloakWPMethods";
+// export { registerCloakWPMethods } from "./plugins/registerCloakWPMethods"
 // Config
 var CloakWPConfig_1 = require("./CloakWPConfig");
 Object.defineProperty(exports, "setCloakWPConfig", { enumerable: true, get: function () { return CloakWPConfig_1.setCloakWPConfig; } });

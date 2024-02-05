@@ -7,7 +7,13 @@
   "exports": {
     ".": {
       "require": "./dist/index.js",
-      "import": "./dist/index.d.ts"
+      "import": "./dist/index.js",
+      "types": "./dist/.d.ts"
+    },
+    "./plugins/*": {
+      "require": "./dist/plugins/*.js",
+      "import": "./dist/plugins/*.js",
+      "types": "./dist/plugins/*.d.ts"
     }
   },
   "scripts": {

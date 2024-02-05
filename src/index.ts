@@ -14,7 +14,7 @@ export { wpBlockStyleBuilder } from "./wpBlockStyleBuilder";
 //   ClientMutationFn,
 //   WPClient
 // } from "./plugins/wpRestApiClient";
-// export { registerCloakWPMethods } from "./plugins/registerCloakWPMethods";
+// export { registerCloakWPMethods } from "./plugins/registerCloakWPMethods"
 
 // Config
 export { setCloakWPConfig, getCloakWPConfig } from "./CloakWPConfig";
