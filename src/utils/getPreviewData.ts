@@ -1,10 +1,9 @@
 import { getCMSInstance } from "cloakcms";
 import { PreviewModeParams } from "../types";
-var WPAPI = require("@cloakwp/wpapi/fetch");
 
 export async function getPreviewData(
   previewParams: PreviewModeParams,
-  serverApiClient?: typeof WPAPI
+  serverApiClient?: any // TODO: type this to WPAPI client once that package is TS
 ) {
   const { revisionId = null, postId, apiMethod } = previewParams;
 

@@ -1,5 +1,4 @@
 export * from "./types";
-export { WPClient } from "./plugins/wpRestApiClient";
 
 // Bundle `cloakcms` into `cloakwp` so users don't need to install it:
 export * from "cloakcms";
@@ -9,12 +8,13 @@ export { WPBlockRenderer } from "./WPBlockRenderer";
 export { wpBlockStyleBuilder } from "./wpBlockStyleBuilder";
 
 // CMSInstance Plugins
-export {
-  wpRestApiClient,
-  RestApiClientConfig,
-  ClientMutationFn,
-} from "./plugins/wpRestApiClient";
-export { registerCloakWPMethods } from "./plugins/registerCloakWPMethods";
+// export {
+//   wpRestApiClient,
+//   RestApiClientConfig,
+//   ClientMutationFn,
+//   WPClient
+// } from "./plugins/wpRestApiClient";
+// export { registerCloakWPMethods } from "./plugins/registerCloakWPMethods";
 
 // Config
 export { setCloakWPConfig, getCloakWPConfig } from "./CloakWPConfig";

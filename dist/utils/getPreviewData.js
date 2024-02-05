@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPreviewData = void 0;
 const cloakcms_1 = require("cloakcms");
-var WPAPI = require("@cloakwp/wpapi/fetch");
-async function getPreviewData(previewParams, serverApiClient) {
+async function getPreviewData(previewParams, serverApiClient // TODO: type this to WPAPI client once that package is TS
+) {
     const { revisionId = null, postId, apiMethod } = previewParams;
     const wp = serverApiClient ?? (0, cloakcms_1.getCMSInstance)().client();
     const page = wp[apiMethod]?.().id(postId);
