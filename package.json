@@ -7,13 +7,42 @@
   "exports": {
     ".": {
       "require": "./dist/index.js",
-      "import": "./dist/index.js",
-      "types": "./dist/.d.ts"
+      "import": "./dist/index.js"
     },
-    "./plugins/*": {
-      "require": "./dist/plugins/*.js",
-      "import": "./dist/plugins/*.js",
-      "types": "./dist/plugins/*.d.ts"
+    "./auth": {
+      "require": "./dist/auth/index.js",
+      "import": "./dist/auth/index.js",
+      "types": "./dist/auth/index.d.ts"
+    },
+    "./blocks": {
+      "require": "./dist/blocks/index.js",
+      "import": "./dist/blocks/index.js",
+      "types": "./dist/blocks/index.d.ts"
+    },
+    "./cms": {
+      "require": "./dist/cms/index.js",
+      "import": "./dist/cms/index.js",
+      "types": "./dist/cms/index.d.ts"
+    },
+    "./editor": {
+      "require": "./dist/editor/index.js",
+      "import": "./dist/editor/index.js",
+      "types": "./dist/editor/index.d.ts"
+    },
+    "./preview": {
+      "require": "./dist/preview/index.js",
+      "import": "./dist/preview/index.js",
+      "types": "./dist/preview/index.d.ts"
+    },
+    "./rest": {
+      "require": "./dist/rest/index.js",
+      "import": "./dist/rest/index.js",
+      "types": "./dist/rest/index.d.ts"
+    },
+    "./sitemap": {
+      "require": "./dist/sitemap/index.js",
+      "import": "./dist/sitemap/index.js",
+      "types": "./dist/sitemap/index.d.ts"
     }
   },
   "scripts": {
@@ -54,7 +83,7 @@
   "dependencies": {
     "@cloakui/utils": "^0.0.1",
     "@cloakwp/wpapi": "^2.0.0",
-    "cloakcms": "^0.1.0"
+    "cloakcms": "^0.2.0"
   },
   "peerDependencies": {
     "@cloakui/styles": ">= 0.2.0"
