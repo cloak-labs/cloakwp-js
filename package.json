@@ -2,12 +2,13 @@
   "name": "cloakwp",
   "version": "0.6.2",
   "description": "Integrate headless WordPress with your decoupled JS front-end.",
-  "main": "dist/index",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "require": "./dist/index.js",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     },
     "./auth": {
       "require": "./dist/auth/index.js",
@@ -81,7 +82,7 @@
     "typescript": "^5.3.2"
   },
   "dependencies": {
-    "@cloakui/utils": "^0.1.0",
+    "@cloakui/utils": "^0.1.2",
     "@cloakwp/wpapi": "^2.0.0",
     "cloakcms": "^0.2.2"
   },
