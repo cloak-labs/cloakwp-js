@@ -9,7 +9,7 @@ export const generateSitemap = (routes, options) => {
         .map((route) => {
         return `
                   <url>
-                      <loc>${stripTrailingSlash(siteUrl)}${route.pathname}</loc>
+                      <loc>${stripTrailingSlash(siteUrl)}${stripTrailingSlash(route.pathname)}</loc>
                       <lastmod>${route.modified}Z</lastmod>
                   </url>
               `;
