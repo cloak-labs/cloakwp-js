@@ -7,6 +7,26 @@ import { VariantProps, cva, cx } from "@cloakui/styles";
 
 const wpBlockClassBuilder = cva({
   variants: {
+    paddingTop: {
+      none: null,
+      "var:preset|spacing|20": "pt-1 md:pt-1.5", // 0.375rem
+      "var:preset|spacing|30": "pt-2 md:pt-2.5", // 0.625rem
+      "var:preset|spacing|40": "pt-3.5 md:pt-4", // 1rem
+      "var:preset|spacing|50": "pt-5 md:pt-6", // 1.5rem
+      "var:preset|spacing|60": "pt-8 md:pt-9", // 2.25rem
+      "var:preset|spacing|70": "pt-12 md:pt-14", // 3.5rem
+      "var:preset|spacing|80": "pt-16 md:pt-20", // 5rem
+    },
+    paddingBottom: {
+      none: null,
+      "var:preset|spacing|20": "pb-1 md:pb-1.5", // 0.375rem
+      "var:preset|spacing|30": "pb-2 md:pb-2.5", // 0.625rem
+      "var:preset|spacing|40": "pb-3.5 md:pb-4", // 1rem
+      "var:preset|spacing|50": "pb-5 md:pb-6", // 1.5rem
+      "var:preset|spacing|60": "pb-8 md:pb-9", // 2.25rem
+      "var:preset|spacing|70": "pb-12 md:pb-14", // 3.5rem
+      "var:preset|spacing|80": "pb-16 md:pb-20", // 5rem
+    },
     marginTop: {
       none: null,
       "var:preset|spacing|20": "mt-1 md:mt-1.5", // 0.375rem
@@ -55,6 +75,7 @@ const wpBlockClassBuilder = cva({
     orientation: {
       default: null,
       flex: null,
+      constrained: null,
       horizontal: "flex-row",
       vertical: "flex-col",
     },
@@ -153,13 +174,15 @@ export const wpBlockStyleBuilder = (
       fontStyle = "normal",
       textDecoration = "none",
     } = {},
-    spacing: { blockGap = {}, margin = {} } = {},
+    spacing: { blockGap = {}, margin = {}, padding = {} } = {},
   } = style ?? {};
 
   let blockGapX: WPBlockSpacingPresets;
   let blockGapY: WPBlockSpacingPresets;
   let marginTop: WPBlockSpacingPresets;
   let marginBottom: WPBlockSpacingPresets;
+  let paddingTop: WPBlockSpacingPresets;
+  let paddingBottom: WPBlockSpacingPresets;
 
   if (block.name == "core/column") {
     blockGapY = "var:preset|spacing|30"; // set default vertical spacing for column block
@@ -183,6 +206,11 @@ export const wpBlockStyleBuilder = (
   if (margin.bottom && isSpacingPreset(margin.bottom))
     marginBottom = margin.bottom as WPBlockSpacingPresets;
 
+  if (padding.top && isSpacingPreset(padding.top))
+    paddingTop = padding.top as WPBlockSpacingPresets;
+  if (padding.bottom && isSpacingPreset(padding.bottom))
+    paddingBottom = padding.bottom as WPBlockSpacingPresets;
+
   const variantClasses = wpBlockClassBuilder({
     verticalAlignment,
     orientation: layout?.orientation || layout?.type,
@@ -194,19 +222,27 @@ export const wpBlockStyleBuilder = (
     blockGapY,
     marginTop,
     marginBottom,
+    paddingTop,
+    paddingBottom,
   });
+
+  let customClassNames;
+  if (className?.includes("is-style-dark"))
+    customClassNames = "dark dark:darker";
 
   const filteredClassNames = excludeClassNamesStartingWith(className, [
     "is-style",
   ]);
 
   const classes = cx(
-    backgroundColor && `${backgroundColor}`,
-    textColor && `${textColor}`,
+    backgroundColor,
+    textColor,
     fontSize && `text-${fontSize}`,
-    (align || textAlign) && `text-${textAlign || align}`,
+    (textAlign || align == "center" || align == "right") &&
+      `text-${textAlign || align}`,
     variantClasses,
-    filteredClassNames
+    filteredClassNames,
+    customClassNames
   );
 
   let styles = null;
