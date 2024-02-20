@@ -23,14 +23,24 @@ export const getDocumentHeight = () => {
 export const handleWPBlockIframeMessage = (event, { onBlockDataReceipt }) => {
   const wpUrl = getCMSInstance().url;
   if (wpUrl.startsWith(event.origin)) {
-    // console.log("received message event IN iframe: ", event);
     // Check if the message is requesting the content height
     if (event.data === "getHeight") {
       sendBlockHeightToWP();
     } else {
-      const blockData = JSON.parse(event.data);
-      console.log("blockData received from WP: ", blockData);
-      onBlockDataReceipt?.(blockData);
+      const data = JSON.parse(event.data);
+      if (data.name && data.type && data.data) {
+        console.log("blockData received from WP: ", data);
+        onBlockDataReceipt?.(data);
+      } else if (data.bodyClassName) {
+        // the following allows WP to set classes on the <body> of the iframe preview; mostly used for setting color themes eg. dark mode
+        console.log("bodyClassName received from WP: ", data);
+        const { bodyClassName } = data;
+        if (Array.isArray(bodyClassName))
+          document.body.classList.add(...bodyClassName);
+        else if (bodyClassName.includes(" "))
+          document.body.classList.add(...bodyClassName.split(" "));
+        else document.body.classList.add(bodyClassName);
+      }
     }
   }
   // }
