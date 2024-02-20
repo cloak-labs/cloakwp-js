@@ -70,11 +70,18 @@ export type WPBlockAttributes<
   };
   backgroundColor?: string;
   layout?: {
-    type?: "default" | "flex" | "horizontal";
+    type?: "default" | "flex" | "horizontal" | "constrained";
     orientation?: "default" | "flex" | "horizontal" | "vertical";
     justifyContent?: "default" | "center" | "right" | "space-between";
   };
-  tagName?: string;
+  tagName?:
+    | "div"
+    | "header"
+    | "main"
+    | "section"
+    | "article"
+    | "aside"
+    | "footer";
   templateLock?: string;
   lock?: any[];
   borderColor?: string;
