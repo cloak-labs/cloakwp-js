@@ -83,7 +83,7 @@
   },
   "dependencies": {
     "@cloakui/utils": "^0.1.2",
-    "@cloakwp/wpapi": "^2.0.0",
+    "@cloakwp/wpapi": "^2.0.1",
     "cloakcms": "^0.2.2"
   },
   "peerDependencies": {
