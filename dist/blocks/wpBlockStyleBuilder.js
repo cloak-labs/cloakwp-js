@@ -63,6 +63,7 @@ const wpBlockClassBuilder = cva({
             "var:preset|spacing|80": "gap-y-20", // 5rem
         },
         verticalAlignment: {
+            none: null,
             default: "justify-start",
             center: "justify-center",
             bottom: "justify-end",
@@ -129,7 +130,7 @@ const wpBlockClassBuilder = cva({
         },
     ],
     defaultVariants: {
-        verticalAlignment: "default",
+        verticalAlignment: "none",
         orientation: "default",
         justifyContent: "default",
         textTransform: "none",
