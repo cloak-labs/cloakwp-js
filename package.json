@@ -87,6 +87,6 @@
     "cloakcms": "^0.2.2"
   },
   "peerDependencies": {
-    "@cloakui/styles": ">= 0.3.0"
+    "@cloakui/styles": ">= 0.3.1"
   }
 }
