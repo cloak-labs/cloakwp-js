@@ -1,4 +1,3 @@
-import type { WPBlockDataWithExtraContext } from "./types";
 import { VariantProps } from "@cloakui/styles";
 declare const wpBlockClassBuilder: (props?: {
     paddingTop?: "none" | "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80";
@@ -7,10 +6,10 @@ declare const wpBlockClassBuilder: (props?: {
     marginBottom?: "none" | "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80";
     blockGapX?: "none" | "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80";
     blockGapY?: "none" | "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80";
-    verticalAlignment?: "center" | "none" | "bottom" | "default";
-    orientation?: "default" | "flex" | "horizontal" | "vertical" | "constrained";
-    justifyContent?: "space-between" | "center" | "right" | "default";
-    textTransform?: "none" | "capitalize" | "lowercase" | "uppercase";
+    verticalAlignment?: "default" | "center" | "none" | "bottom";
+    orientation?: "default" | "flex" | "constrained" | "horizontal" | "vertical";
+    justifyContent?: "default" | "center" | "right" | "space-between";
+    textTransform?: "none" | "uppercase" | "lowercase" | "capitalize";
     fontStyle?: "normal" | "italic";
     textDecoration?: "none" | "line-through" | "underline";
 } & ({
@@ -74,7 +73,7 @@ type WPBlockStyleObject = {
     padding?: string;
     margin?: string;
 };
-export declare const wpBlockStyleBuilder: (block: WPBlockDataWithExtraContext) => {
+export declare const wpBlockStyleBuilder: (block: BlockDataWithExtraContext<TBlockData>) => {
     classes: string;
     styles: WPBlockStyleObject | null;
 };
