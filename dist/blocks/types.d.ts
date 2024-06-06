@@ -74,7 +74,7 @@ export type WPBlockAttributes<TSpacingPresets extends string = WPBlockSpacingPre
  * will wrap these in the same way, passing in their respective component & render output types):
  */
 export type WPBlockRendererConfig<TComponent = any, TRenderOutput = any, TBlockData = RestApiBlockData> = BlockRendererConfig<TComponent, TRenderOutput, TBlockData>;
-export type WPDataRouter<TProps = EmptyObjectOrRecord, TBlockData = RestApiBlockData, TComponent = any> = DataRouter<TProps, TBlockData, TComponent>;
+export type WPDataRouter<TProps = EmptyObjectOrRecord, TBlockData = RestApiBlockData, TComponent = any> = DataRouter<TProps, TBlockData, TComponent, WPBlockDataWithExtraContext<TBlockData>>;
 export type WPGlobalDataRouter<TProps = EmptyObjectOrRecord, TBlockData = RestApiBlockData> = GlobalDataRouter<TProps, TBlockData>;
 export type WPSingleBlockConfigWithoutVariants<TComponent = any, TProps = EmptyObjectOrRecord, TBlockData = RestApiBlockData> = SingleBlockConfigWithoutVariants<TComponent, TProps, TBlockData>;
 export type WPVariantsRouter<TBlockData = RestApiBlockData> = VariantsRouter<TBlockData>;
