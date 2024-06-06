@@ -22,6 +22,26 @@ const wpBlockClassBuilder = cva({
             "var:preset|spacing|70": "pb-12 md:pb-14", // 3.5rem
             "var:preset|spacing|80": "pb-16 md:pb-20", // 5rem
         },
+        paddingRight: {
+            none: null,
+            "var:preset|spacing|20": "pr-1 md:pr-1.5", // 0.375rem
+            "var:preset|spacing|30": "pr-2 md:pr-2.5", // 0.625rem
+            "var:preset|spacing|40": "pr-3.5 md:pr-4", // 1rem
+            "var:preset|spacing|50": "pr-5 md:pr-6", // 1.5rem
+            "var:preset|spacing|60": "pr-8 md:pr-9", // 2.25rem
+            "var:preset|spacing|70": "pr-12 md:pr-14", // 3.5rem
+            "var:preset|spacing|80": "pr-16 md:pr-20", // 5rem
+        },
+        paddingLeft: {
+            none: null,
+            "var:preset|spacing|20": "pl-1 md:pl-1.5", // 0.375rem
+            "var:preset|spacing|30": "pl-2 md:pl-2.5", // 0.625rem
+            "var:preset|spacing|40": "pl-3.5 md:pl-4", // 1rem
+            "var:preset|spacing|50": "pl-5 md:pl-6", // 1.5rem
+            "var:preset|spacing|60": "pl-8 md:pl-9", // 2.25rem
+            "var:preset|spacing|70": "pl-12 md:pl-14", // 3.5rem
+            "var:preset|spacing|80": "pl-16 md:pl-20", // 5rem
+        },
         marginTop: {
             none: null,
             "var:preset|spacing|20": "mt-1 md:mt-1.5", // 0.375rem
@@ -149,6 +169,8 @@ export const wpBlockStyleBuilder = (block) => {
     let marginBottom;
     let paddingTop;
     let paddingBottom;
+    let paddingRight;
+    let paddingLeft;
     if (block.name == "core/column") {
         blockGapY = "var:preset|spacing|30"; // set default vertical spacing for column block
     }
@@ -171,6 +193,10 @@ export const wpBlockStyleBuilder = (block) => {
         paddingTop = padding.top;
     if (padding.bottom && isSpacingPreset(padding.bottom))
         paddingBottom = padding.bottom;
+    if (padding.right && isSpacingPreset(padding.right))
+        paddingRight = padding.right;
+    if (padding.left && isSpacingPreset(padding.left))
+        paddingLeft = padding.left;
     const variantClasses = wpBlockClassBuilder({
         verticalAlignment,
         orientation: layout?.orientation || layout?.type,
@@ -184,6 +210,8 @@ export const wpBlockStyleBuilder = (block) => {
         marginBottom,
         paddingTop,
         paddingBottom,
+        paddingRight,
+        paddingLeft,
     });
     let customClassNames;
     if (className?.includes("is-style-dark"))
