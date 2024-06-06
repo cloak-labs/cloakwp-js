@@ -126,7 +126,12 @@ export type WPDataRouter<
   TProps = EmptyObjectOrRecord,
   TBlockData = RestApiBlockData,
   TComponent = any
-> = DataRouter<TProps, TBlockData, TComponent>;
+> = DataRouter<
+  TProps,
+  TBlockData,
+  TComponent,
+  WPBlockDataWithExtraContext<TBlockData>
+>;
 
 export type WPGlobalDataRouter<
   TProps = EmptyObjectOrRecord,
