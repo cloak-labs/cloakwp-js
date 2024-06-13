@@ -50,7 +50,7 @@
     "dev": "tsc -p tsconfig.json -w",
     "zzz-dev": "tsc-watch --onFailure \"echo Beep! Compilation Failed\" --noClear",
     "build": "npm run build-ts",
-    "build-ts": "tsc-silent -p tsconfig.json --suppress",
+    "build-ts": "tsc-silent -p tsconfig.json --suppress @",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "zzz-postpublish": "git push && git push --tags"
   },
