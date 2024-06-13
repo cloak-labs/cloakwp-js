@@ -64,6 +64,7 @@ const wpBlockClassBuilder = cva({
         },
         blockGapX: {
             none: null,
+            "0": null,
             "var:preset|spacing|20": "gap-1 md:gap-1.5", // 0.375rem
             "var:preset|spacing|30": "gap-2 md:gap-2.5", // 0.625rem
             "var:preset|spacing|40": "gap-3.5 md:gap-4", // 1rem
@@ -74,6 +75,7 @@ const wpBlockClassBuilder = cva({
         },
         blockGapY: {
             none: null,
+            "0": null,
             "var:preset|spacing|20": "gap-y-1.5", // 0.375rem
             "var:preset|spacing|30": "gap-y-2.5", // 0.625rem
             "var:preset|spacing|40": "gap-y-4", // 1rem
@@ -176,8 +178,12 @@ export const wpBlockStyleBuilder = (block) => {
     }
     const isSpacingPreset = (str) => str.startsWith("var:preset|spacing|");
     if (typeof blockGap == "string") {
-        if (isSpacingPreset(blockGap))
+        if (block.name == "core/column") {
+            blockGapY = blockGap;
+        }
+        else {
             blockGapX = blockGap;
+        }
     }
     else {
         if (blockGap.left && isSpacingPreset(blockGap.left))
