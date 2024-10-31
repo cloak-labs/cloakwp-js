@@ -1,6 +1,6 @@
 {
   "name": "cloakwp",
-  "version": "0.6.9",
+  "version": "0.6.10",
   "description": "Integrate WordPress with your decoupled JS front-end.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
