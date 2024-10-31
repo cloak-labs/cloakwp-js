@@ -4,7 +4,7 @@ import { PreviewModeParams } from "./types";
 export async function getPreviewData(
   previewParams: PreviewModeParams,
   serverApiClient?: any // TODO: type this to WPAPI client once that package is TS
-) {
+): Promise<Record<string, any>> {
   const { revisionId = null, postId, apiMethod } = previewParams;
 
   const wp = serverApiClient ?? getCMSInstance().client();
