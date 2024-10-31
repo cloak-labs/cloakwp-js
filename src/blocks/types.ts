@@ -10,7 +10,7 @@ import {
   SingleBlockConfigWithVariants,
   SingleBlockConfigWithoutVariants,
   VariantsRouter,
-} from "cloakcms";
+} from "../cms";
 import { AdvancedCustomFields } from "../rest/types";
 
 export type RestApiBlockData = {
@@ -54,6 +54,10 @@ export type WPBlockAttributes<
 > = {
   align?: "wide" | "full" | "center" | "right";
   style?: {
+    layout?: {
+      selfStretch?: "fixed";
+      flexSize?: string;
+    };
     typography?: {
       textTransform?: "none" | "uppercase" | "lowercase" | "capitalize";
       fontFamily?: string;
@@ -67,13 +71,19 @@ export type WPBlockAttributes<
       padding?: WPBlockSpacingObject<TSpacingPresets>;
       margin?: WPBlockSpacingObject<TSpacingPresets>;
     };
+    border?: {
+      radius?: string;
+    };
   };
   backgroundColor?: string;
   layout?: {
     type?: "default" | "flex" | "horizontal" | "constrained";
     orientation?: "default" | "flex" | "horizontal" | "vertical";
     justifyContent?: "default" | "center" | "right" | "space-between";
+    flexWrap?: "wrap" | "nowrap";
+    verticalAlignment?: "default" | "center" | "bottom";
   };
+  verticalAlignment?: "default" | "center" | "bottom" | "stretch";
   tagName?:
     | "div"
     | "header"
@@ -98,7 +108,6 @@ export type WPBlockAttributes<
   level?: string;
   content?: string;
   textAlign?: string;
-  verticalAlignment?: "default" | "center" | "bottom";
   aspectRatio?: string;
   alt?: string;
   caption?: string;
@@ -117,7 +126,7 @@ export type WPBlockAttributes<
  * will wrap these in the same way, passing in their respective component & render output types):
  */
 export type WPBlockRendererConfig<
-  TComponent = any,
+  TComponent extends (props: any) => any = (props: any) => any,
   TRenderOutput = any,
   TBlockData = RestApiBlockData
 > = BlockRendererConfig<TComponent, TRenderOutput, TBlockData>;
@@ -125,7 +134,7 @@ export type WPBlockRendererConfig<
 export type WPDataRouter<
   TProps = EmptyObjectOrRecord,
   TBlockData = RestApiBlockData,
-  TComponent = any
+  TComponent extends (props: any) => any = (props: any) => any
 > = DataRouter<
   TProps,
   TBlockData,
@@ -139,7 +148,7 @@ export type WPGlobalDataRouter<
 > = GlobalDataRouter<TProps, TBlockData>;
 
 export type WPSingleBlockConfigWithoutVariants<
-  TComponent = any,
+  TComponent extends (props: any) => any = (props: any) => any,
   TProps = EmptyObjectOrRecord,
   TBlockData = RestApiBlockData
 > = SingleBlockConfigWithoutVariants<TComponent, TProps, TBlockData>;
@@ -148,18 +157,18 @@ export type WPVariantsRouter<TBlockData = RestApiBlockData> =
   VariantsRouter<TBlockData>;
 
 export type WPSingleBlockConfigWithVariants<
-  TComponent = any,
+  TComponent extends (props: any) => any = (props: any) => any,
   TProps = EmptyObjectOrRecord,
   TBlockData = RestApiBlockData
 > = SingleBlockConfigWithVariants<TComponent, TProps, TBlockData>;
 
 export type WPSingleBlockConfig<
-  TComponent = any,
+  TComponent extends (props: any) => any = (props: any) => any,
   TBlockData = RestApiBlockData
 > = SingleBlockConfig<TComponent, TBlockData>;
 
 export type WPBlocksConfig<
-  TComponent = any,
+  TComponent extends (props: any) => any = (props: any) => any,
   TBlockData = RestApiBlockData
 > = BlocksConfig<TComponent, TBlockData>;
 
