@@ -9,7 +9,7 @@ export const isUserLoggedIn = async () => {
             return false;
         }
         const data = await response.json();
-        return data === true ? true : false;
+        return data === true;
     }
     catch (error) {
         console.error(`Error while checking user's WP login status: ${error.message ?? error}`);

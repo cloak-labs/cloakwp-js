@@ -8,7 +8,7 @@ export const registerCloakWPMethods = (incomingConfig) => {
                     return;
                 client.menus = client.registerRoute("cloakwp", "/menus/(?P<id>[a-zA-Z0-9-]+)");
                 client.options = client.registerRoute("cloakwp", "/options/(?P<id>[a-zA-Z0-9-]+)");
-                client.isLoggedIn = client.registerRoute("jwt-auth/v1", "/is-logged-in");
+                client.isLoggedIn = client.registerRoute("cloakwp", "/is-logged-in");
                 client.frontpage = client.registerRoute("cloakwp", "/frontpage");
                 return client;
             },

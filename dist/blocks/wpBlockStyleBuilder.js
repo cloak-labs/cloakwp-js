@@ -84,24 +84,37 @@ const wpBlockClassBuilder = cva({
             "var:preset|spacing|70": "gap-y-14", // 3.5rem
             "var:preset|spacing|80": "gap-y-20", // 5rem
         },
-        verticalAlignment: {
+        verticalAlignmentCol: {
             none: null,
             default: "justify-start",
             center: "justify-center",
             bottom: "justify-end",
         },
-        orientation: {
-            default: null,
-            flex: null,
-            constrained: null,
-            horizontal: "flex-row",
-            vertical: "flex-col",
+        verticalAlignmentRow: {
+            none: null,
+            default: "items-start",
+            center: "items-center",
+            bottom: "items-end",
         },
-        justifyContent: {
+        orientation: {
+            none: null,
+            default: "flex flex-col",
+            flex: "flex flex-row",
+            constrained: null,
+            horizontal: "flex flex-row",
+            vertical: "flex flex-col",
+        },
+        justifyContentCol: {
             default: null,
-            center: null,
-            right: null,
-            "space-between": null,
+            center: "items-center",
+            right: "items-end",
+            "space-between": "items-between",
+        },
+        justifyContentRow: {
+            default: null,
+            center: "justify-center",
+            right: "justify-end",
+            "space-between": "justify-between",
         },
         textTransform: {
             none: null,
@@ -119,42 +132,12 @@ const wpBlockClassBuilder = cva({
             underline: "underline",
         },
     },
-    compoundVariants: [
-        {
-            orientation: "default",
-            justifyContent: "center",
-            class: "items-center",
-        },
-        {
-            orientation: "default",
-            justifyContent: "right",
-            class: "items-end",
-        },
-        {
-            orientation: "default",
-            justifyContent: "space-between",
-            class: "items-between",
-        },
-        {
-            orientation: ["horizontal", "flex"],
-            justifyContent: "center",
-            class: "justify-center",
-        },
-        {
-            orientation: ["horizontal", "flex"],
-            justifyContent: "right",
-            class: "justify-end",
-        },
-        {
-            orientation: ["horizontal", "flex"],
-            justifyContent: "space-between",
-            class: "justify-between",
-        },
-    ],
     defaultVariants: {
-        verticalAlignment: "none",
-        orientation: "default",
-        justifyContent: "default",
+        verticalAlignmentRow: "none",
+        verticalAlignmentCol: "none",
+        orientation: "none",
+        justifyContentCol: "default",
+        justifyContentRow: "default",
         textTransform: "none",
         fontStyle: "normal",
         textDecoration: "none",
@@ -163,7 +146,7 @@ const wpBlockClassBuilder = cva({
     },
 });
 export const wpBlockStyleBuilder = (block) => {
-    const { backgroundColor, textColor, className, fontSize, align, textAlign, style = {}, verticalAlignment, layout = {}, } = block.attrs;
+    const { backgroundColor, textColor, className, fontSize, align, textAlign, verticalAlignment, style = {}, layout = {}, } = block.attrs;
     const { typography: { textTransform = "none", fontStyle = "normal", textDecoration = "none", } = {}, spacing: { blockGap = {}, margin = {}, padding = {} } = {}, } = style ?? {};
     let blockGapX;
     let blockGapY;
@@ -178,7 +161,8 @@ export const wpBlockStyleBuilder = (block) => {
     }
     const isSpacingPreset = (str) => str.startsWith("var:preset|spacing|");
     if (typeof blockGap == "string") {
-        if (block.name == "core/column") {
+        if (block.name == "core/column" ||
+            (block.name == "core/group" && block.attrs.layout.type != "flex")) {
             blockGapY = blockGap;
         }
         else {
@@ -203,10 +187,11 @@ export const wpBlockStyleBuilder = (block) => {
         paddingRight = padding.right;
     if (padding.left && isSpacingPreset(padding.left))
         paddingLeft = padding.left;
+    const isFlexRow = layout?.orientation == "horizontal" || layout?.type == "flex";
     const variantClasses = wpBlockClassBuilder({
-        verticalAlignment,
+        [`verticalAlignment${isFlexRow ? "Row" : "Col"}`]: layout?.verticalAlignment ?? verticalAlignment, // note: WP sometimes nests verticalAlignment under `layout` for some reason
         orientation: layout?.orientation || layout?.type,
-        justifyContent: layout.justifyContent,
+        [`justifyContent${isFlexRow ? "Row" : "Col"}`]: layout?.justifyContent,
         textTransform,
         fontStyle,
         textDecoration,
@@ -225,8 +210,12 @@ export const wpBlockStyleBuilder = (block) => {
     const filteredClassNames = excludeClassNamesStartingWith(className, [
         "is-style",
     ]);
-    const classes = cx(backgroundColor, textColor, fontSize && `text-${fontSize}`, (textAlign || align == "center" || align == "right") &&
-        `text-${textAlign || align}`, variantClasses, filteredClassNames, customClassNames);
+    // Remove leading ">" characters from class names, which is a way to disable the class from affecting the Gutenberg editor styling and only apply to the iframe preview
+    const finalClassNames = filteredClassNames
+        ?.split(" ")
+        ?.map((c) => (c.startsWith(">") ? c.slice(1) : c));
+    const classes = cx(backgroundColor == "transparent" ? "bg-transparent" : backgroundColor, textColor, fontSize && `text-${fontSize}`, (textAlign || align == "center" || align == "right") &&
+        `text-${textAlign || align}`, variantClasses, layout?.flexWrap == "wrap" && "flex-wrap", finalClassNames, customClassNames);
     let styles = null;
     ["padding", "margin"].forEach((property) => {
         const values = style?.spacing?.[property];
@@ -245,6 +234,11 @@ export const wpBlockStyleBuilder = (block) => {
             styles[property] = `${top} ${right} ${bottom} ${left}`;
         }
     });
+    if (style?.border?.radius) {
+        if (!styles)
+            styles = {};
+        styles["borderRadius"] = style?.border?.radius;
+    }
     return {
         classes,
         styles,

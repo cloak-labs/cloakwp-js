@@ -7,6 +7,6 @@ import { type RestApiBlockData } from "./types";
  * Having users use this wrapper also sets us up for future WP-specific customizations
  * of the BlockRenderer without having to issue breaking changes.
  */
-export declare class WPBlockRenderer<TComponent = any, TRenderOutput = any, TBlockData = RestApiBlockData> extends BlockRenderer<TComponent, TRenderOutput, TBlockData> {
+export declare class WPBlockRenderer<TComponent extends (props: any) => any = (props: any) => any, TRenderOutput = any, TBlockData = RestApiBlockData> extends BlockRenderer<TComponent, TRenderOutput, TBlockData> {
     constructor(config: BlockRendererConfig<TComponent, TRenderOutput, Partial<TBlockData>>);
 }

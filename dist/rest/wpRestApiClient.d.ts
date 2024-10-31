@@ -19,7 +19,7 @@ export declare const wpRestApiClient: (options: RestApiClientConfig) => (incomin
     adminPath: `/${string}`;
     contentPath: `/${string}`;
     name?: string;
-    blockRenderer?: import("cloakcms").BlockRenderer<any, any, Record<string, any>>;
+    blockRenderer?: import("cloakcms").BlockRenderer<(props: any) => any, any, Record<string, any>>;
     meta?: Record<string, any>;
     plugins?: Plugin<CMSInstance>[];
 }>;

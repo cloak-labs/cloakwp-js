@@ -1,4 +1,4 @@
-import { DataRouter, BlockContext, BlockDataWithExtraContext, BlockRendererConfig, BlocksConfig, EmptyObjectOrRecord, GlobalDataRouter, SingleBlockConfig, SingleBlockConfigWithVariants, SingleBlockConfigWithoutVariants, VariantsRouter } from "cloakcms";
+import { DataRouter, BlockContext, BlockDataWithExtraContext, BlockRendererConfig, BlocksConfig, EmptyObjectOrRecord, GlobalDataRouter, SingleBlockConfig, SingleBlockConfigWithVariants, SingleBlockConfigWithoutVariants, VariantsRouter } from "../cms";
 import { AdvancedCustomFields } from "../rest/types";
 export type RestApiBlockData = {
     name: string;
@@ -19,6 +19,10 @@ export type WPBlockSpacingObject<TSpacingPresets extends string = WPBlockSpacing
 export type WPBlockAttributes<TSpacingPresets extends string = WPBlockSpacingPresets> = {
     align?: "wide" | "full" | "center" | "right";
     style?: {
+        layout?: {
+            selfStretch?: "fixed";
+            flexSize?: string;
+        };
         typography?: {
             textTransform?: "none" | "uppercase" | "lowercase" | "capitalize";
             fontFamily?: string;
@@ -32,13 +36,19 @@ export type WPBlockAttributes<TSpacingPresets extends string = WPBlockSpacingPre
             padding?: WPBlockSpacingObject<TSpacingPresets>;
             margin?: WPBlockSpacingObject<TSpacingPresets>;
         };
+        border?: {
+            radius?: string;
+        };
     };
     backgroundColor?: string;
     layout?: {
         type?: "default" | "flex" | "horizontal" | "constrained";
         orientation?: "default" | "flex" | "horizontal" | "vertical";
         justifyContent?: "default" | "center" | "right" | "space-between";
+        flexWrap?: "wrap" | "nowrap";
+        verticalAlignment?: "default" | "center" | "bottom";
     };
+    verticalAlignment?: "default" | "center" | "bottom" | "stretch";
     tagName?: "div" | "header" | "main" | "section" | "article" | "aside" | "footer";
     templateLock?: string;
     lock?: any[];
@@ -56,7 +66,6 @@ export type WPBlockAttributes<TSpacingPresets extends string = WPBlockSpacingPre
     level?: string;
     content?: string;
     textAlign?: string;
-    verticalAlignment?: "default" | "center" | "bottom";
     aspectRatio?: string;
     alt?: string;
     caption?: string;
@@ -73,13 +82,13 @@ export type WPBlockAttributes<TSpacingPresets extends string = WPBlockSpacingPre
  * so users don't have to worry about doing that (framework-specific CloakWP wrappers
  * will wrap these in the same way, passing in their respective component & render output types):
  */
-export type WPBlockRendererConfig<TComponent = any, TRenderOutput = any, TBlockData = RestApiBlockData> = BlockRendererConfig<TComponent, TRenderOutput, TBlockData>;
-export type WPDataRouter<TProps = EmptyObjectOrRecord, TBlockData = RestApiBlockData, TComponent = any> = DataRouter<TProps, TBlockData, TComponent, WPBlockDataWithExtraContext<TBlockData>>;
+export type WPBlockRendererConfig<TComponent extends (props: any) => any = (props: any) => any, TRenderOutput = any, TBlockData = RestApiBlockData> = BlockRendererConfig<TComponent, TRenderOutput, TBlockData>;
+export type WPDataRouter<TProps = EmptyObjectOrRecord, TBlockData = RestApiBlockData, TComponent extends (props: any) => any = (props: any) => any> = DataRouter<TProps, TBlockData, TComponent, WPBlockDataWithExtraContext<TBlockData>>;
 export type WPGlobalDataRouter<TProps = EmptyObjectOrRecord, TBlockData = RestApiBlockData> = GlobalDataRouter<TProps, TBlockData>;
-export type WPSingleBlockConfigWithoutVariants<TComponent = any, TProps = EmptyObjectOrRecord, TBlockData = RestApiBlockData> = SingleBlockConfigWithoutVariants<TComponent, TProps, TBlockData>;
+export type WPSingleBlockConfigWithoutVariants<TComponent extends (props: any) => any = (props: any) => any, TProps = EmptyObjectOrRecord, TBlockData = RestApiBlockData> = SingleBlockConfigWithoutVariants<TComponent, TProps, TBlockData>;
 export type WPVariantsRouter<TBlockData = RestApiBlockData> = VariantsRouter<TBlockData>;
-export type WPSingleBlockConfigWithVariants<TComponent = any, TProps = EmptyObjectOrRecord, TBlockData = RestApiBlockData> = SingleBlockConfigWithVariants<TComponent, TProps, TBlockData>;
-export type WPSingleBlockConfig<TComponent = any, TBlockData = RestApiBlockData> = SingleBlockConfig<TComponent, TBlockData>;
-export type WPBlocksConfig<TComponent = any, TBlockData = RestApiBlockData> = BlocksConfig<TComponent, TBlockData>;
+export type WPSingleBlockConfigWithVariants<TComponent extends (props: any) => any = (props: any) => any, TProps = EmptyObjectOrRecord, TBlockData = RestApiBlockData> = SingleBlockConfigWithVariants<TComponent, TProps, TBlockData>;
+export type WPSingleBlockConfig<TComponent extends (props: any) => any = (props: any) => any, TBlockData = RestApiBlockData> = SingleBlockConfig<TComponent, TBlockData>;
+export type WPBlocksConfig<TComponent extends (props: any) => any = (props: any) => any, TBlockData = RestApiBlockData> = BlocksConfig<TComponent, TBlockData>;
 export type WPBlockDataWithExtraContext<TBlockData = RestApiBlockData> = BlockDataWithExtraContext<TBlockData>;
 export type WPBlockContext<TBlockData = RestApiBlockData> = BlockContext<TBlockData>;

@@ -4,7 +4,8 @@ export type WPMenuItem = {
     description?: string;
     url: string;
     target: "" | "_blank";
-    link_type: "page" | "custom";
+    link_type: "post_type" | "page" | "custom";
+    classes: string;
     menu_item_parent: number | `${number}`;
     menu_order: number | `${number}`;
     sub_menu_items: WPMenuItem[];
