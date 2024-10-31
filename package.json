@@ -1,7 +1,7 @@
 {
   "name": "cloakwp",
   "version": "0.6.9",
-  "description": "Integrate headless WordPress with your decoupled JS front-end.",
+  "description": "Integrate WordPress with your decoupled JS front-end.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -47,12 +47,12 @@
     }
   },
   "scripts": {
-    "dev": "tsc -p tsconfig.json -w",
+    "dev": "tsc -p tsconfig.json -w --preserveWatchOutput",
     "zzz-dev": "tsc-watch --onFailure \"echo Beep! Compilation Failed\" --noClear",
     "build": "npm run build-ts",
     "build-ts": "tsc-silent -p tsconfig.json --suppress @",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "zzz-postpublish": "git push && git push --tags"
+    "clean": "rm -rf .turbo && rm -rf dist && npm run clean:modules",
+    "clean:modules": "rm -rf node_modules"
   },
   "repository": {
     "type": "git",
@@ -74,17 +74,15 @@
     "url": "https://github.com/cloak-labs/cloakwp-js/issues"
   },
   "homepage": "https://github.com/cloak-labs/cloakwp-js#readme",
+  "dependencies": {
+    "@cloakui/utils": "^0.1.4",
+    "@cloakwp/wpapi": "^2.0.2",
+    "cloakcms": "^0.3.0"
+  },
   "devDependencies": {
     "@types/node": "^18.18.1",
-    "@types/react": "18.2.37",
-    "@types/react-dom": "^18.2.8",
     "tsc-watch": "^5.0.3",
     "typescript": "^5.3.2"
-  },
-  "dependencies": {
-    "@cloakui/utils": "^0.1.3",
-    "@cloakwp/wpapi": "^2.0.1",
-    "cloakcms": "^0.2.2"
   },
   "peerDependencies": {
     "@cloakui/styles": ">= 0.3.x"
