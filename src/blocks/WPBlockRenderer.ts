@@ -9,7 +9,7 @@ import { type RestApiBlockData } from "./types";
  * of the BlockRenderer without having to issue breaking changes.
  */
 export class WPBlockRenderer<
-  TComponent = any,
+  TComponent extends (props: any) => any = (props: any) => any,
   TRenderOutput = any,
   TBlockData = RestApiBlockData
 > extends BlockRenderer<TComponent, TRenderOutput, TBlockData> {
