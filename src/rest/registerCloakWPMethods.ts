@@ -18,10 +18,7 @@ export const registerCloakWPMethods = (incomingConfig: RestApiClientConfig) => {
           "/options/(?P<id>[a-zA-Z0-9-]+)"
         );
 
-        client.isLoggedIn = client.registerRoute(
-          "jwt-auth/v1",
-          "/is-logged-in"
-        );
+        client.isLoggedIn = client.registerRoute("cloakwp", "/is-logged-in");
         client.frontpage = client.registerRoute("cloakwp", "/frontpage");
 
         return client;
