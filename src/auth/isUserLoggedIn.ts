@@ -1,6 +1,6 @@
 import { getCloakWPConfig } from "../CloakWPConfig";
 
-export const isUserLoggedIn = async () => {
+export const isUserLoggedIn = async (): Promise<boolean> => {
   const { apiRouterBasePath } = getCloakWPConfig();
 
   try {
@@ -17,7 +17,7 @@ export const isUserLoggedIn = async () => {
 
     const data = await response.json();
 
-    return data === true ? true : false;
+    return data === true;
   } catch (error) {
     console.error(
       `Error while checking user's WP login status: ${error.message ?? error}`
