@@ -18,6 +18,6 @@ export function flattenBlocks(blocks) {
             innerBlocks.forEach(flatten);
         }
     }
-    blocks.forEach(flatten);
+    blocks?.forEach(flatten);
     return flattenedBlocks;
 }

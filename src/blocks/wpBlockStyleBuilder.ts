@@ -16,6 +16,7 @@ const wpBlockClassBuilder = cva({
       "var:preset|spacing|60": "pt-8 md:pt-9", // 2.25rem
       "var:preset|spacing|70": "pt-12 md:pt-14", // 3.5rem
       "var:preset|spacing|80": "pt-16 md:pt-20", // 5rem
+      "var:preset|spacing|90": "pt-20 md:pt-24", // 6rem
     },
     paddingBottom: {
       none: null,
@@ -26,6 +27,7 @@ const wpBlockClassBuilder = cva({
       "var:preset|spacing|60": "pb-8 md:pb-9", // 2.25rem
       "var:preset|spacing|70": "pb-12 md:pb-14", // 3.5rem
       "var:preset|spacing|80": "pb-16 md:pb-20", // 5rem
+      "var:preset|spacing|90": "pb-20 md:pb-24", // 6rem
     },
     paddingRight: {
       none: null,
@@ -36,6 +38,7 @@ const wpBlockClassBuilder = cva({
       "var:preset|spacing|60": "pr-8 md:pr-9", // 2.25rem
       "var:preset|spacing|70": "pr-12 md:pr-14", // 3.5rem
       "var:preset|spacing|80": "pr-16 md:pr-20", // 5rem
+      "var:preset|spacing|90": "pr-20 md:pr-24", // 6rem
     },
     paddingLeft: {
       none: null,
@@ -46,6 +49,7 @@ const wpBlockClassBuilder = cva({
       "var:preset|spacing|60": "pl-8 md:pl-9", // 2.25rem
       "var:preset|spacing|70": "pl-12 md:pl-14", // 3.5rem
       "var:preset|spacing|80": "pl-16 md:pl-20", // 5rem
+      "var:preset|spacing|90": "pl-20 md:pl-24", // 6rem
     },
     marginTop: {
       none: null,
@@ -56,6 +60,7 @@ const wpBlockClassBuilder = cva({
       "var:preset|spacing|60": "mt-8 md:mt-9", // 2.25rem
       "var:preset|spacing|70": "mt-12 md:mt-14", // 3.5rem
       "var:preset|spacing|80": "mt-16 md:mt-20", // 5rem
+      "var:preset|spacing|90": "mt-20 md:mt-24", // 6rem
     },
     marginBottom: {
       none: null,
@@ -66,6 +71,7 @@ const wpBlockClassBuilder = cva({
       "var:preset|spacing|60": "mb-8 md:mb-9", // 2.25rem
       "var:preset|spacing|70": "mb-12 md:mb-14", // 3.5rem
       "var:preset|spacing|80": "mb-16 md:mb-20", // 5rem
+      "var:preset|spacing|90": "mb-20 md:mb-24", // 6rem
     },
     blockGapX: {
       none: null,
@@ -77,6 +83,7 @@ const wpBlockClassBuilder = cva({
       "var:preset|spacing|60": "gap-8 md:gap-9", // 2.25rem
       "var:preset|spacing|70": "gap-12 md:gap-14", // 3.5rem
       "var:preset|spacing|80": "gap-16 md:gap-20", // 5rem
+      "var:preset|spacing|90": "gap-20 md:gap-24", // 6rem
     },
     blockGapY: {
       none: null,
@@ -88,6 +95,7 @@ const wpBlockClassBuilder = cva({
       "var:preset|spacing|60": "gap-y-9", // 2.25rem
       "var:preset|spacing|70": "gap-y-14", // 3.5rem
       "var:preset|spacing|80": "gap-y-20", // 5rem
+      "var:preset|spacing|90": "gap-y-24", // 6rem
     },
     verticalAlignmentCol: {
       none: null,
@@ -105,7 +113,7 @@ const wpBlockClassBuilder = cva({
       none: null,
       default: "flex flex-col",
       flex: "flex flex-row",
-      constrained: null,
+      constrained: "flex flex-col",
       horizontal: "flex flex-row",
       vertical: "flex flex-col",
     },
@@ -120,6 +128,11 @@ const wpBlockClassBuilder = cva({
       center: "justify-center",
       right: "justify-end",
       "space-between": "justify-between",
+    },
+    selfStretch: {
+      fixed: "",
+      fit: "",
+      fill: "grow basis-[min-content]",
     },
     textTransform: {
       none: null,
@@ -162,7 +175,8 @@ type WPBlockStyleObject = {
 };
 
 export const wpBlockStyleBuilder = (
-  block: WPBlockDataWithExtraContext
+  block: WPBlockDataWithExtraContext,
+  classBuilder: typeof wpBlockClassBuilder = wpBlockClassBuilder
 ): { classes: string; styles: WPBlockStyleObject | null } => {
   const {
     backgroundColor,
@@ -183,6 +197,7 @@ export const wpBlockStyleBuilder = (
       textDecoration = "none",
     } = {},
     spacing: { blockGap = {}, margin = {}, padding = {} } = {},
+    background = {},
   } = style ?? {};
 
   let blockGapX: WPBlockSpacingPresets;
@@ -234,11 +249,12 @@ export const wpBlockStyleBuilder = (
   const isFlexRow =
     layout?.orientation == "horizontal" || layout?.type == "flex";
 
-  const variantClasses = wpBlockClassBuilder({
+  const variantClasses = classBuilder({
     [`verticalAlignment${isFlexRow ? "Row" : "Col"}`]:
       layout?.verticalAlignment ?? verticalAlignment, // note: WP sometimes nests verticalAlignment under `layout` for some reason
     orientation: layout?.orientation || layout?.type,
     [`justifyContent${isFlexRow ? "Row" : "Col"}`]: layout?.justifyContent,
+    selfStretch: style?.layout?.selfStretch,
     textTransform,
     fontStyle,
     textDecoration,
@@ -252,7 +268,7 @@ export const wpBlockStyleBuilder = (
     paddingLeft,
   });
 
-  let customClassNames;
+  let customClassNames: string | null = null;
   if (className?.includes("is-style-dark"))
     customClassNames = "dark dark:darker";
 
@@ -302,9 +318,28 @@ export const wpBlockStyleBuilder = (
     }
   });
 
+  if (background.backgroundImage) {
+    if (!styles) styles = {};
+
+    styles["backgroundImage"] = `url(${background.backgroundImage.url})`;
+    styles["backgroundSize"] = background.backgroundSize ?? "cover";
+  }
+
+  if (style?.layout?.flexSize) {
+    if (!styles) styles = {};
+    styles["flexBasis"] = style?.layout?.flexSize;
+  }
+
   if (style?.border?.radius) {
     if (!styles) styles = {};
-    styles["borderRadius"] = style?.border?.radius;
+    const radius = style?.border?.radius;
+    if (typeof radius == "string") {
+      styles["borderRadius"] = radius;
+    } else {
+      styles[
+        "borderRadius"
+      ] = `${radius.topLeft} ${radius.topRight} ${radius.bottomRight} ${radius.bottomLeft}`;
+    }
   }
 
   return {

@@ -1,4 +1,4 @@
-import { RestApiClientConfig } from "./wpRestApiClient";
+import { type RestApiClientConfig } from "./types";
 
 export const registerCloakWPMethods = (incomingConfig: RestApiClientConfig) => {
   return {

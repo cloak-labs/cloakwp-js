@@ -1,3 +1,4 @@
+import { type Plugin } from "cloakcms";
 export type WPMenuItem = {
     id: number | `${number}`;
     title: string;
@@ -13,3 +14,19 @@ export type WPMenuItem = {
 export type AdvancedCustomFields = Record<string, any>;
 export type HttpUrl = `http://${string}`;
 export type HttpsUrl = `https://${string}`;
+export type WPClient = {
+    setHeaders: (header: string, value: string) => void;
+    [key: string]: any;
+};
+export type ClientMutationFn = ({ client }: {
+    client: WPClient;
+}) => WPClient;
+export type RestApiClientConfig = {
+    auth?: {
+        jwt?: string;
+        dangerouslyIgnoreExposedJwtWarning?: boolean;
+    };
+    wpapiOptions?: Record<string, any>;
+    clientMutations?: ClientMutationFn[];
+    plugins?: Plugin<RestApiClientConfig>[];
+};

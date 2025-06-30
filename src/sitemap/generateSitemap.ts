@@ -18,7 +18,9 @@ export const generateSitemap = (
                       <loc>${stripTrailingSlash(siteUrl)}${stripTrailingSlash(
                 route.pathname
               )}</loc>
-                      <lastmod>${route.modified}Z</lastmod>
+                      <lastmod>${route.modified}${
+                route.modified.endsWith("Z") ? "" : "Z"
+              }</lastmod>
                   </url>
               `;
             })

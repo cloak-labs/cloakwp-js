@@ -1,19 +1,5 @@
 import { withPlugins, type CMSInstance, type Plugin } from "cloakcms";
-var wpapi = require("@cloakwp/wpapi/fetch");
-
-export type WPClient = typeof wpapi;
-
-export type ClientMutationFn = ({ client }: { client: WPClient }) => WPClient;
-
-export interface RestApiClientConfig {
-  auth?: {
-    jwt?: string;
-    dangerouslyIgnoreExposedJwtWarning?: boolean;
-  };
-  wpapiOptions?: Record<string, any>; // TODO: add TS typing to wpapi package so we can type this properly here
-  clientMutations?: ClientMutationFn[];
-  plugins?: Plugin<RestApiClientConfig>[];
-}
+import { type RestApiClientConfig, type WPClient } from "./types";
 
 export const wpRestApiClient =
   (options: RestApiClientConfig) => async (incomingConfig: CMSInstance) => {
@@ -35,6 +21,7 @@ export const wpRestApiClient =
       );
     }
 
+    const wpapi = (await import("@cloakwp/wpapi/fetch")).default;
     let client: WPClient = new wpapi({
       endpoint: `${incomingConfig.url}/wp-json`,
       ...wpapiOptions,
@@ -51,10 +38,8 @@ export const wpRestApiClient =
       });
     }
 
-    const modifiedConfig = {
+    return {
       ...incomingConfig,
       client: () => client,
     };
-
-    return modifiedConfig;
   };

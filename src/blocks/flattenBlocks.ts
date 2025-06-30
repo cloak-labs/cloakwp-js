@@ -24,7 +24,7 @@ export function flattenBlocks(blocks: RestApiBlockData[]): RestApiBlockData[] {
     }
   }
 
-  blocks.forEach(flatten);
+  blocks?.forEach(flatten);
 
   return flattenedBlocks;
 }

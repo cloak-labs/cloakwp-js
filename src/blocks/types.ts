@@ -55,7 +55,7 @@ export type WPBlockAttributes<
   align?: "wide" | "full" | "center" | "right";
   style?: {
     layout?: {
-      selfStretch?: "fixed";
+      selfStretch?: "fixed" | "fill" | "fit";
       flexSize?: string;
     };
     typography?: {
@@ -72,7 +72,23 @@ export type WPBlockAttributes<
       margin?: WPBlockSpacingObject<TSpacingPresets>;
     };
     border?: {
-      radius?: string;
+      radius?:
+        | string
+        | {
+            topLeft?: string;
+            topRight?: string;
+            bottomRight?: string;
+            bottomLeft?: string;
+          };
+    };
+    background?: {
+      backgroundImage?: {
+        url?: string;
+        id?: number;
+        source?: "file";
+        title?: string;
+      };
+      backgroundSize?: "cover" | "contain";
     };
   };
   backgroundColor?: string;
@@ -118,6 +134,16 @@ export type WPBlockAttributes<
   value?: string;
   citation?: string;
   isStackedOnMobile?: boolean;
+  metadata?: {
+    bindings?: WPBlockBinding[];
+  };
+};
+
+export type WPBlockBinding = {
+  source: string;
+  args: {
+    key: string;
+  };
 };
 
 /**

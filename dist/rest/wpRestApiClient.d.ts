@@ -1,20 +1,7 @@
 import { type CMSInstance, type Plugin } from "cloakcms";
-declare var wpapi: any;
-export type WPClient = typeof wpapi;
-export type ClientMutationFn = ({ client }: {
-    client: WPClient;
-}) => WPClient;
-export interface RestApiClientConfig {
-    auth?: {
-        jwt?: string;
-        dangerouslyIgnoreExposedJwtWarning?: boolean;
-    };
-    wpapiOptions?: Record<string, any>;
-    clientMutations?: ClientMutationFn[];
-    plugins?: Plugin<RestApiClientConfig>[];
-}
+import { type RestApiClientConfig, type WPClient } from "./types";
 export declare const wpRestApiClient: (options: RestApiClientConfig) => (incomingConfig: CMSInstance) => Promise<{
-    client: () => any;
+    client: () => WPClient;
     url: `http://${string}` | `https://${string}`;
     adminPath: `/${string}`;
     contentPath: `/${string}`;
@@ -23,4 +10,3 @@ export declare const wpRestApiClient: (options: RestApiClientConfig) => (incomin
     meta?: Record<string, any>;
     plugins?: Plugin<CMSInstance>[];
 }>;
-export {};

@@ -1,4 +1,4 @@
-import { PreviewModeParams } from "./types";
+import { type PreviewModeParams } from "./types";
 
 export const getPreviewParams = (
   revisionId: string,

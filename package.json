@@ -10,6 +10,11 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.js",
+      "types": "./dist/*.d.ts"
+    },
     "./auth": {
       "require": "./dist/auth/index.js",
       "import": "./dist/auth/index.js",

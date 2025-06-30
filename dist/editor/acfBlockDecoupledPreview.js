@@ -16,7 +16,7 @@ export const getDocumentHeight = () => {
     }
     return minHeight;
 };
-// When parent (i.e. WP Block Editor) sends message, handleWPBlockIframeMessage() handles it:
+// When parent (i.e. WP Block Editor) sends message, this function handles it:
 export const handleWPBlockIframeMessage = (event, { onBlockDataReceipt }) => {
     const wpUrl = getCMSInstance().url;
     if (wpUrl.startsWith(event.origin)) {
@@ -46,19 +46,62 @@ export const handleWPBlockIframeMessage = (event, { onBlockDataReceipt }) => {
     // }
 };
 // Use the ResizeObserver API to watch for document height resizes, and send new height values to WP
+// export const watchForDocumentHeightChanges = (options?: {
+//   onHeightChange: (newHeight: number) => any | void;
+// }): ResizeObserver => {
+//   const { onHeightChange } = options ?? {};
+//   let cachedHeight = getDocumentHeight();
+//   let observer: ResizeObserver;
+//   if (typeof document !== "undefined") {
+//     observer = new ResizeObserver((entries) => {
+//       // detected a height change for document.documentElement...
+//       const newHeight = parseInt(
+//         entries?.[0]?.contentBoxSize?.[0].blockSize?.toFixed(0)
+//       );
+//       // Ignore updates if height matches viewport height (likely using `h-screen`, which can cause infinite loops)
+//       if (cachedHeight !== newHeight) {
+//         console.log("ResizeObserver detected new document height: ", newHeight);
+//         cachedHeight = newHeight;
+//         onHeightChange?.(newHeight);
+//         sendBlockHeightToWP(newHeight);
+//       }
+//     });
+//     observer.observe(document.documentElement);
+//   }
+//   return observer;
+// };
 export const watchForDocumentHeightChanges = (options) => {
     const { onHeightChange } = options ?? {};
     let cachedHeight = getDocumentHeight();
-    let observer;
-    if (typeof document !== "undefined") {
-        observer = new ResizeObserver((entries) => {
-            // detected a height change for document.documentElement...
-            const newHeight = parseInt(entries?.[0]?.contentBoxSize?.[0].blockSize?.toFixed(0));
-            if (cachedHeight != newHeight) {
-                console.log("ResizeObserver detected new document height: ", newHeight);
+    let timeoutId = null;
+    const debounceTime = 200; // 200ms debounce time, ensures that the height is not sent too often
+    const sendHeightDebounced = (newHeight) => {
+        console.log("in sendHeightDebounced");
+        if (timeoutId) {
+            console.log("clearing timeout id: ", timeoutId);
+            clearTimeout(timeoutId);
+        }
+        // Schedule a new height update
+        timeoutId = setTimeout(() => {
+            if (cachedHeight !== newHeight) {
+                console.log("Sending new height to WP:", newHeight);
                 cachedHeight = newHeight;
                 onHeightChange?.(newHeight);
                 sendBlockHeightToWP(newHeight);
+            }
+            else {
+                console.log("Height hasn't changed, not sending to WP");
+            }
+            timeoutId = null; // Reset timeoutId
+        }, debounceTime);
+    };
+    let observer;
+    if (typeof document !== "undefined") {
+        observer = new ResizeObserver((entries) => {
+            const newHeight = parseInt(entries?.[0]?.contentBoxSize?.[0].blockSize?.toFixed(0));
+            // Skip if height matches viewport height (`h-screen`) to avoid feedback loops
+            if (newHeight !== cachedHeight) {
+                sendHeightDebounced(newHeight);
             }
         });
         observer.observe(document.documentElement);

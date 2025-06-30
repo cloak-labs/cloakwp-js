@@ -1,5 +1,5 @@
 import { getCMSInstance } from "cloakcms";
-import { PreviewModeParams } from "./types";
+import { type PreviewModeParams } from "./types";
 
 export async function getPreviewData(
   previewParams: PreviewModeParams,
