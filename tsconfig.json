@@ -6,6 +6,7 @@
     "rootDir": "src",
     "outDir": "dist",
     "declaration": true,
+    "declarationMap": true,
     "declarationDir": "dist",
     "strict": false,
     "noEmit": false,
