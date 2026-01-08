@@ -1,8 +1,8 @@
-import { getCMSInstance } from "cloakcms";
+import { ContentSourceRegistry } from "cloakcms";
 export async function getPreviewData(previewParams, serverApiClient // TODO: type this to WPAPI client once that package is TS
 ) {
     const { revisionId = null, postId, apiMethod } = previewParams;
-    const wp = serverApiClient ?? getCMSInstance().client();
+    const wp = serverApiClient ?? ContentSourceRegistry.get().client();
     const page = wp[apiMethod]?.().id(postId);
     let revision;
     if (revisionId) {

@@ -7,9 +7,13 @@ export const wpRestApiClient = (options) => async (incomingConfig) => {
         dangerouslyIgnoreExposedJwtWarning !== true) {
         throw Error("You're exposing your JWT token to the client/browser, which is a major security concern. You should store it in a server-only ENV variable, then pass that variable into the `auth.jwt` option -- effectively making it `null` on the client side; yes, this means you should only make authenticated requests server-side.");
     }
+    // Resolve the active URL from config
+    const wpUrl = typeof incomingConfig.url === "string"
+        ? incomingConfig.url
+        : incomingConfig.url[incomingConfig.activeEnvironment];
     const wpapi = (await import("@cloakwp/wpapi/fetch")).default;
     let client = new wpapi({
-        endpoint: `${incomingConfig.url}/wp-json`,
+        endpoint: `${wpUrl}/wp-json`,
         ...wpapiOptions,
     });
     if (jwt) {

@@ -1,14 +1,16 @@
 import type { WPBlockDataWithExtraContext } from "./types";
 import { VariantProps } from "@cloakui/styles";
 declare const wpBlockClassBuilder: (props?: {
-    paddingTop?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|90";
-    paddingBottom?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|90";
-    paddingRight?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|90";
-    paddingLeft?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|90";
-    marginTop?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|90";
-    marginBottom?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|90";
-    blockGapX?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|90" | "0";
-    blockGapY?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|90" | "0";
+    paddingTop?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|auto" | "var:preset|spacing|90";
+    paddingBottom?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|auto" | "var:preset|spacing|90";
+    paddingRight?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|auto" | "var:preset|spacing|90";
+    paddingLeft?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|auto" | "var:preset|spacing|90";
+    marginTop?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|auto" | "var:preset|spacing|90";
+    marginBottom?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|auto" | "var:preset|spacing|90";
+    marginLeft?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|auto" | "var:preset|spacing|90";
+    marginRight?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|auto" | "var:preset|spacing|90";
+    blockGapX?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "var:preset|spacing|auto" | "var:preset|spacing|90" | "0";
+    blockGapY?: "var:preset|spacing|20" | "var:preset|spacing|30" | "var:preset|spacing|40" | "var:preset|spacing|50" | "var:preset|spacing|60" | "var:preset|spacing|70" | "var:preset|spacing|80" | "none" | "default" | "var:preset|spacing|auto" | "var:preset|spacing|90" | "0";
     verticalAlignmentCol?: "center" | "none" | "default" | "bottom";
     verticalAlignmentRow?: "center" | "none" | "default" | "bottom";
     orientation?: "none" | "default" | "flex" | "horizontal" | "constrained" | "vertical";

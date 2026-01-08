@@ -52,6 +52,9 @@ export type WPBlockAttributes<TSpacingPresets extends string = WPBlockSpacingPre
                 title?: string;
             };
             backgroundSize?: "cover" | "contain";
+            backgroundPosition?: string;
+            backgroundRepeat?: "no-repeat" | "repeat" | "repeat-x" | "repeat-y";
+            backgroundAttachment?: "scroll" | "fixed" | "local";
         };
     };
     backgroundColor?: string;
