@@ -1,8 +1,9 @@
-import { withPlugins, type CMSInstance, type Plugin } from "cloakcms";
+import { withPlugins, type ContentSourceConfig } from "cloakcms";
 import { type RestApiClientConfig, type WPClient } from "./types";
 
 export const wpRestApiClient =
-  (options: RestApiClientConfig) => async (incomingConfig: CMSInstance) => {
+  (options: RestApiClientConfig) =>
+  async (incomingConfig: ContentSourceConfig): Promise<ContentSourceConfig> => {
     const optionsAfterPlugins = await withPlugins(options, options.plugins);
 
     const {
@@ -21,9 +22,15 @@ export const wpRestApiClient =
       );
     }
 
+    // Resolve the active URL from config
+    const wpUrl =
+      typeof incomingConfig.url === "string"
+        ? incomingConfig.url
+        : incomingConfig.url[incomingConfig.activeEnvironment];
+
     const wpapi = (await import("@cloakwp/wpapi/fetch")).default;
     let client: WPClient = new wpapi({
-      endpoint: `${incomingConfig.url}/wp-json`,
+      endpoint: `${wpUrl}/wp-json`,
       ...wpapiOptions,
     });
 

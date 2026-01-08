@@ -1,4 +1,4 @@
-import { getCMSInstance } from "cloakcms";
+import { ContentSourceRegistry } from "cloakcms";
 
 // Sends the block preview page's height to WP via iFrame message posting
 export const sendBlockHeightToWP = (h: number | null = null) => {
@@ -21,7 +21,7 @@ export const getDocumentHeight = () => {
 
 // When parent (i.e. WP Block Editor) sends message, this function handles it:
 export const handleWPBlockIframeMessage = (event, { onBlockDataReceipt }) => {
-  const wpUrl = getCMSInstance().url;
+  const wpUrl = ContentSourceRegistry.get().getActiveUrl();
   if (wpUrl.startsWith(event.origin)) {
     // Check if the message is requesting the content height
     if (event.data === "getHeight") {

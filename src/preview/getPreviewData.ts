@@ -1,4 +1,4 @@
-import { getCMSInstance } from "cloakcms";
+import { ContentSourceRegistry } from "cloakcms";
 import { type PreviewModeParams } from "./types";
 
 export async function getPreviewData(
@@ -7,7 +7,7 @@ export async function getPreviewData(
 ): Promise<Record<string, any>> {
   const { revisionId = null, postId, apiMethod } = previewParams;
 
-  const wp = serverApiClient ?? getCMSInstance().client();
+  const wp = serverApiClient ?? ContentSourceRegistry.get().client();
   const page = wp[apiMethod]?.().id(postId);
 
   let revision;
