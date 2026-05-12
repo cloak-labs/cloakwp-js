@@ -1,11 +1,8 @@
-import { getCloakWPConfig } from "../CloakWPConfig";
-
 export const isUserLoggedIn = async (): Promise<boolean> => {
-  const { apiRouterBasePath } = getCloakWPConfig();
-
   try {
     const response = await fetch(
-      `${apiRouterBasePath}/is-authenticated?XDEBUG_TRIGGER`,
+      // `/api/cloakwp/is-authenticated?XDEBUG_TRIGGER`, // useful for debugging, but not ideal to leave on as the parameter's presence slows down the response considerably.
+      `/api/cloakwp/is-authenticated`,
       {
         credentials: "include",
       }

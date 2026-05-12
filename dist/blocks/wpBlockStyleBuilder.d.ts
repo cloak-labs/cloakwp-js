@@ -88,3 +88,4 @@ export declare const wpBlockStyleBuilder: (block: WPBlockDataWithExtraContext, c
     styles: WPBlockStyleObject | null;
 };
 export {};
+//# sourceMappingURL=wpBlockStyleBuilder.d.ts.map

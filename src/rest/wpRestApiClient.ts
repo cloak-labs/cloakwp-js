@@ -30,7 +30,7 @@ export const wpRestApiClient =
 
     const wpapi = (await import("@cloakwp/wpapi/fetch")).default;
     let client: WPClient = new wpapi({
-      endpoint: `${wpUrl}/wp-json`,
+      endpoint: `${wpUrl}${incomingConfig.apiPath ?? "/wp-json"}`,
       ...wpapiOptions,
     });
 

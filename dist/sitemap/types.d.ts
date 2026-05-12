@@ -7,3 +7,4 @@ export type SitemapRouteObject = {
 export type SitemapOptions = {
     siteUrl: HttpUrl | HttpsUrl;
 };
+//# sourceMappingURL=types.d.ts.map

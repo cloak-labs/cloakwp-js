@@ -5,3 +5,4 @@ export declare function validateRouteSecretToken(secret: string): {
     valid: boolean;
     error?: undefined;
 };
+//# sourceMappingURL=validateRouteSecretToken.d.ts.map

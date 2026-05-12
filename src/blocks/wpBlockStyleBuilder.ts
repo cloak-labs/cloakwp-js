@@ -390,7 +390,7 @@ export const wpBlockStyleBuilder = (
     } else {
       styles[
         "borderRadius"
-      ] = `${radius.topLeft} ${radius.topRight} ${radius.bottomRight} ${radius.bottomLeft}`;
+      ] = `${radius.topLeft || 0} ${radius.topRight || 0} ${radius.bottomRight || 0} ${radius.bottomLeft || 0}`;
     }
   }
 

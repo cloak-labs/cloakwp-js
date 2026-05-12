@@ -4,3 +4,4 @@ export type PreviewModeParams = {
     apiMethod: string;
     postType: string;
 };
+//# sourceMappingURL=types.d.ts.map

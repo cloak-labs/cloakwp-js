@@ -118,3 +118,4 @@ export type WPSingleBlockConfig<TComponent extends (props: any) => any = (props:
 export type WPBlocksConfig<TComponent extends (props: any) => any = (props: any) => any, TBlockData = RestApiBlockData> = BlocksConfig<TComponent, TBlockData>;
 export type WPBlockDataWithExtraContext<TBlockData = RestApiBlockData> = BlockDataWithExtraContext<TBlockData>;
 export type WPBlockContext<TBlockData = RestApiBlockData> = BlockContext<TBlockData>;
+//# sourceMappingURL=types.d.ts.map

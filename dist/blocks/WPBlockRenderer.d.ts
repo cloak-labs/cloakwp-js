@@ -10,3 +10,4 @@ import { type RestApiBlockData } from "./types";
 export declare class WPBlockRenderer<TComponent extends (props: any) => any = (props: any) => any, TRenderOutput = any, TBlockData = RestApiBlockData> extends BlockRenderer<TComponent, TRenderOutput, TBlockData> {
     constructor(config: BlockRendererConfig<TComponent, TRenderOutput, Partial<TBlockData>>);
 }
+//# sourceMappingURL=WPBlockRenderer.d.ts.map

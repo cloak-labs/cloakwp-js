@@ -1,0 +1,1 @@
+{"version":3,"file":"wpRestApiClient.d.ts","sourceRoot":"","sources":["../../src/rest/wpRestApiClient.ts"],"names":[],"mappings":"AAAA,OAAO,EAAe,KAAK,mBAAmB,EAAE,MAAM,UAAU,CAAC;AACjE,OAAO,EAAE,KAAK,mBAAmB,EAAiB,MAAM,SAAS,CAAC;AAElE,eAAO,MAAM,eAAe,YAChB,mBAAmB,sBACN,mBAAmB,KAAG,QAAQ,mBAAmB,CA8CvE,CAAC"}

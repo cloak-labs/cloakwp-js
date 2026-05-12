@@ -6,3 +6,4 @@ export declare const handleWPBlockIframeMessage: (event: any, { onBlockDataRecei
 export declare const watchForDocumentHeightChanges: (options?: {
     onHeightChange: (newHeight: number) => any | void;
 }) => ResizeObserver;
+//# sourceMappingURL=acfBlockDecoupledPreview.d.ts.map

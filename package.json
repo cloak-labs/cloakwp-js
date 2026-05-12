@@ -2,14 +2,10 @@
   "name": "cloakwp",
   "version": "0.6.10",
   "description": "Integrate WordPress with your decoupled JS front-end.",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
-    ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
     "./*": {
       "require": "./dist/*.js",
       "import": "./dist/*.js",
@@ -55,7 +51,7 @@
     "dev": "tsc -p tsconfig.json -w --preserveWatchOutput",
     "zzz-dev": "tsc-watch --onFailure \"echo Beep! Compilation Failed\" --noClear",
     "build": "npm run build-ts",
-    "build-ts": "tsc-silent -p tsconfig.json --suppress @",
+    "build-ts": "tsc -p tsconfig.json",
     "clean": "rm -rf .turbo && rm -rf dist && npm run clean:modules",
     "clean:modules": "rm -rf node_modules"
   },

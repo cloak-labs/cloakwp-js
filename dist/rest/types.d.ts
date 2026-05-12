@@ -30,3 +30,4 @@ export type RestApiClientConfig = {
     clientMutations?: ClientMutationFn[];
     plugins?: Plugin<RestApiClientConfig>[];
 };
+//# sourceMappingURL=types.d.ts.map

@@ -8,3 +8,4 @@ import { type RestApiBlockData } from "./types";
  * @returns A new flat array containing all blocks with innerBlocks moved to the root level
  */
 export declare function flattenBlocks(blocks: RestApiBlockData[]): RestApiBlockData[];
+//# sourceMappingURL=flattenBlocks.d.ts.map
