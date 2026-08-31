@@ -1,4 +1,4 @@
-import { ContentSourceRegistry } from "cloakcms";
+import { ContentSourceRegistry } from "@cloakui/content-sources";
 import { type PreviewModeParams } from "./types";
 
 export async function getPreviewData(

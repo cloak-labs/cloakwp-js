@@ -1,1 +1,1 @@
-export { sendBlockHeightToWP, getDocumentHeight, handleWPBlockIframeMessage, watchForDocumentHeightChanges, } from "./acfBlockDecoupledPreview";
+export { sendBlockHeightToWP, getDocumentHeight, previewHasBlockContent, handleWPBlockIframeMessage, watchForDocumentHeightChanges, applyPreviewViewportTokens, PREVIEW_VIEWPORT_CSS_VARS, getConfiguredWpOrigin, sendPreviewReadyToWp, } from "./acfBlockDecoupledPreview";

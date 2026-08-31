@@ -1,1 +1,1 @@
-{"version":3,"file":"registerCloakWPMethods.d.ts","sourceRoot":"","sources":["../../src/rest/registerCloakWPMethods.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,KAAK,mBAAmB,EAAE,MAAM,SAAS,CAAC;AAEnD,eAAO,MAAM,sBAAsB,mBAAoB,mBAAmB,wBAyBzE,CAAC"}
+{"version":3,"file":"registerCloakWPMethods.d.ts","sourceRoot":"","sources":["../../src/rest/registerCloakWPMethods.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,KAAK,mBAAmB,EAAE,MAAM,SAAS,CAAC;AAEnD,eAAO,MAAM,sBAAsB,mBAAoB,mBAAmB,wBAwBzE,CAAC"}

@@ -1,6 +1,6 @@
-import { BlockRenderer } from "cloakcms";
+import { BlockRenderer, } from "@cloakui/block-renderer";
 /**
- * A tiny wrapper around the BlockRenderer class from `@kaelan/render-blocks`, simply
+ * A tiny wrapper around the BlockRenderer class from `@cloakui/block-renderer`, simply
  * for the purposes of setting the `TBlockData` type parameter to default to CloakWP's
  * `RestApiBlockData` type, saving users from having to manually specify this type param.
  * Having users use this wrapper also sets us up for future WP-specific customizations

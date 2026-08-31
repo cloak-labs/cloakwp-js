@@ -1,4 +1,4 @@
-import { type Plugin } from "cloakcms";
+import { type Plugin } from "@cloakui/content-sources";
 
 export type WPMenuItem = {
   id: number | `${number}`;
@@ -29,6 +29,8 @@ export type ClientMutationFn = ({ client }: { client: WPClient }) => WPClient;
 export type RestApiClientConfig = {
   auth?: {
     jwt?: string;
+    applicationUser?: string;
+    applicationPassword?: string;
     dangerouslyIgnoreExposedJwtWarning?: boolean;
   };
   wpapiOptions?: Record<string, any>; // TODO: add TS typing to wpapi package so we can type this properly here

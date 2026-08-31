@@ -1,3 +1,3 @@
-export * from "./types";
-export { getPreviewData } from "./getPreviewData";
-export { getPreviewParams } from "./getPreviewParams";
+export { getPreviewData } from "./getPreviewData.js";
+export { getPreviewParams } from "./getPreviewParams.js";
+export { verifyPreviewToken } from "./verifyPreviewToken.js";

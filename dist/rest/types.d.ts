@@ -1,4 +1,4 @@
-import { type Plugin } from "cloakcms";
+import { type Plugin } from "@cloakui/content-sources";
 export type WPMenuItem = {
     id: number | `${number}`;
     title: string;
@@ -24,6 +24,8 @@ export type ClientMutationFn = ({ client }: {
 export type RestApiClientConfig = {
     auth?: {
         jwt?: string;
+        applicationUser?: string;
+        applicationPassword?: string;
         dangerouslyIgnoreExposedJwtWarning?: boolean;
     };
     wpapiOptions?: Record<string, any>;

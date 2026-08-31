@@ -41,6 +41,11 @@
       "import": "./dist/rest/index.js",
       "types": "./dist/rest/index.d.ts"
     },
+    "./revalidation": {
+      "require": "./dist/revalidation/index.js",
+      "import": "./dist/revalidation/index.js",
+      "types": "./dist/revalidation/index.d.ts"
+    },
     "./sitemap": {
       "require": "./dist/sitemap/index.js",
       "import": "./dist/sitemap/index.js",
@@ -52,6 +57,7 @@
     "zzz-dev": "tsc-watch --onFailure \"echo Beep! Compilation Failed\" --noClear",
     "build": "npm run build-ts",
     "build-ts": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test test/*.test.mjs",
     "clean": "rm -rf .turbo && rm -rf dist && npm run clean:modules",
     "clean:modules": "rm -rf node_modules"
   },
@@ -76,9 +82,10 @@
   },
   "homepage": "https://github.com/cloak-labs/cloakwp-js#readme",
   "dependencies": {
+    "@cloakui/block-renderer": "^0.4.0",
+    "@cloakui/content-sources": "^0.4.0",
     "@cloakui/utils": "^0.1.4",
-    "@cloakwp/wpapi": "^2.0.2",
-    "cloakcms": "^0.3.0"
+    "@cloakwp/wpapi": "^2.0.2"
   },
   "devDependencies": {
     "@types/node": "^18.18.1",

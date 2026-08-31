@@ -1,13 +1,9 @@
-import { withPlugins } from "cloakcms";
+import { withPlugins } from "@cloakui/content-sources";
+import { assertMachineAuthNotExposed, resolveMachineAuth, } from "../auth/machineAuth.js";
 export const wpRestApiClient = (options) => async (incomingConfig) => {
     const optionsAfterPlugins = await withPlugins(options, options.plugins);
-    const { auth: { jwt, dangerouslyIgnoreExposedJwtWarning = false } = {}, wpapiOptions = {}, clientMutations, } = optionsAfterPlugins;
-    if (typeof window !== "undefined" &&
-        jwt &&
-        dangerouslyIgnoreExposedJwtWarning !== true) {
-        throw Error("You're exposing your JWT token to the client/browser, which is a major security concern. You should store it in a server-only ENV variable, then pass that variable into the `auth.jwt` option -- effectively making it `null` on the client side; yes, this means you should only make authenticated requests server-side.");
-    }
-    // Resolve the active URL from config
+    const { auth = {}, wpapiOptions = {}, clientMutations } = optionsAfterPlugins;
+    assertMachineAuthNotExposed(auth, typeof window !== "undefined");
     const wpUrl = typeof incomingConfig.url === "string"
         ? incomingConfig.url
         : incomingConfig.url[incomingConfig.activeEnvironment];
@@ -16,9 +12,9 @@ export const wpRestApiClient = (options) => async (incomingConfig) => {
         endpoint: `${wpUrl}${incomingConfig.apiPath ?? "/wp-json"}`,
         ...wpapiOptions,
     });
-    if (jwt) {
-        // add JWT authentication globally for all requests -- this API client should therefore only ever be used server-side so as to not expose the JWT value to the browser
-        client.setHeaders("Authorization", `Bearer ${jwt}`);
+    const { authorization } = resolveMachineAuth(auth);
+    if (authorization) {
+        client.setHeaders("Authorization", authorization);
     }
     if (clientMutations && clientMutations.length) {
         clientMutations.forEach((mutationFn) => {

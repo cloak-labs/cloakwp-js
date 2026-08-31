@@ -1,9 +1,9 @@
-import { stripTrailingSlash } from "cloakcms";
+import { stripTrailingSlash } from "@cloakui/content-sources";
 import type { SitemapOptions, SitemapRouteObject } from "./types";
 
 export const generateSitemap = (
   routes: SitemapRouteObject[],
-  options: SitemapOptions
+  options: SitemapOptions,
 ): string => {
   const { siteUrl } = options ?? {};
   if (!siteUrl)
@@ -15,12 +15,10 @@ export const generateSitemap = (
             .map((route) => {
               return `
                   <url>
-                      <loc>${stripTrailingSlash(siteUrl)}${stripTrailingSlash(
-                route.pathname
-              )}</loc>
+                      <loc>${stripTrailingSlash(siteUrl)}${route.pathname}</loc>
                       <lastmod>${route.modified}${
-                route.modified.endsWith("Z") ? "" : "Z"
-              }</lastmod>
+                        route.modified.endsWith("Z") ? "" : "Z"
+                      }</lastmod>
                   </url>
               `;
             })

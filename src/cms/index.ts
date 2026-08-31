@@ -1,2 +1,2 @@
-// Bundle `cloakcms` into `cloakwp` so users don't need to install it:
-export * from "cloakcms";
+// Re-export content-sources so consumers can import via `cloakwp/cms`:
+export * from "@cloakui/content-sources";

@@ -1,1 +1,2 @@
-export * from "./types";
+export { handleCloakWpRequest } from "./handleCloakWpRequest.js";
+export { normalizePathname } from "./normalizePathname.js";

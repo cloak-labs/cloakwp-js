@@ -12,7 +12,7 @@ const wpBlockClassBuilder = cva({
             "var:preset|spacing|60": "pt-8 md:pt-9", // 2.25rem
             "var:preset|spacing|70": "pt-12 md:pt-14", // 3.5rem
             "var:preset|spacing|80": "pt-16 md:pt-20", // 5rem
-            "var:preset|spacing|90": "pt-20 md:pt-24", // 6rem
+            "var:preset|spacing|90": "pt-20 md:pt-24 2xl:pt-28", // 6rem
         },
         paddingBottom: {
             none: null,
@@ -24,7 +24,7 @@ const wpBlockClassBuilder = cva({
             "var:preset|spacing|60": "pb-8 md:pb-9", // 2.25rem
             "var:preset|spacing|70": "pb-12 md:pb-14", // 3.5rem
             "var:preset|spacing|80": "pb-16 md:pb-20", // 5rem
-            "var:preset|spacing|90": "pb-20 md:pb-24", // 6rem
+            "var:preset|spacing|90": "pb-20 md:pb-24 2xl:pb-28", // 6rem
         },
         paddingRight: {
             none: null,
@@ -60,7 +60,7 @@ const wpBlockClassBuilder = cva({
             "var:preset|spacing|60": "mt-8 md:mt-9", // 2.25rem
             "var:preset|spacing|70": "mt-12 md:mt-14", // 3.5rem
             "var:preset|spacing|80": "mt-16 md:mt-20", // 5rem
-            "var:preset|spacing|90": "mt-20 md:mt-24", // 6rem
+            "var:preset|spacing|90": "mt-20 md:mt-24 2xl:mt-28", // 6rem
         },
         marginBottom: {
             none: null,
@@ -72,7 +72,7 @@ const wpBlockClassBuilder = cva({
             "var:preset|spacing|60": "mb-8 md:mb-9", // 2.25rem
             "var:preset|spacing|70": "mb-12 md:mb-14", // 3.5rem
             "var:preset|spacing|80": "mb-16 md:mb-20", // 5rem
-            "var:preset|spacing|90": "mb-20 md:mb-24", // 6rem
+            "var:preset|spacing|90": "mb-20 md:mb-24 2xl:mb-28", // 6rem
         },
         marginLeft: {
             none: null,

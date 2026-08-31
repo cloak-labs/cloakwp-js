@@ -1,4 +1,4 @@
-import { stripTrailingSlash } from "cloakcms";
+import { stripTrailingSlash } from "@cloakui/content-sources";
 export const generateSitemap = (routes, options) => {
     const { siteUrl } = options ?? {};
     if (!siteUrl)
@@ -9,7 +9,7 @@ export const generateSitemap = (routes, options) => {
         .map((route) => {
         return `
                   <url>
-                      <loc>${stripTrailingSlash(siteUrl)}${stripTrailingSlash(route.pathname)}</loc>
+                      <loc>${stripTrailingSlash(siteUrl)}${route.pathname}</loc>
                       <lastmod>${route.modified}${route.modified.endsWith("Z") ? "" : "Z"}</lastmod>
                   </url>
               `;

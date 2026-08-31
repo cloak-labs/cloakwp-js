@@ -1,4 +1,4 @@
-import { ContentSourceRegistry } from "cloakcms";
+import { ContentSourceRegistry } from "@cloakui/content-sources";
 export async function getPreviewData(previewParams, serverApiClient // TODO: type this to WPAPI client once that package is TS
 ) {
     const { revisionId = null, postId, apiMethod } = previewParams;

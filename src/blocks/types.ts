@@ -1,4 +1,5 @@
 import {
+  ComponentLike,
   DataRouter,
   BlockContext,
   BlockDataWithExtraContext,
@@ -10,7 +11,7 @@ import {
   SingleBlockConfigWithVariants,
   SingleBlockConfigWithoutVariants,
   VariantsRouter,
-} from "../cms";
+} from "@cloakui/block-renderer";
 import { AdvancedCustomFields } from "../rest/types";
 
 export type RestApiBlockData = {
@@ -155,7 +156,7 @@ export type WPBlockBinding = {
  * will wrap these in the same way, passing in their respective component & render output types):
  */
 export type WPBlockRendererConfig<
-  TComponent extends (props: any) => any = (props: any) => any,
+  TComponent extends ComponentLike = ComponentLike,
   TRenderOutput = any,
   TBlockData = RestApiBlockData
 > = BlockRendererConfig<TComponent, TRenderOutput, TBlockData>;
@@ -163,7 +164,7 @@ export type WPBlockRendererConfig<
 export type WPDataRouter<
   TProps = EmptyObjectOrRecord,
   TBlockData = RestApiBlockData,
-  TComponent extends (props: any) => any = (props: any) => any
+  TComponent extends ComponentLike = ComponentLike
 > = DataRouter<
   TProps,
   TBlockData,
@@ -177,7 +178,7 @@ export type WPGlobalDataRouter<
 > = GlobalDataRouter<TProps, TBlockData>;
 
 export type WPSingleBlockConfigWithoutVariants<
-  TComponent extends (props: any) => any = (props: any) => any,
+  TComponent extends ComponentLike = ComponentLike,
   TProps = EmptyObjectOrRecord,
   TBlockData = RestApiBlockData
 > = SingleBlockConfigWithoutVariants<TComponent, TProps, TBlockData>;
@@ -186,18 +187,18 @@ export type WPVariantsRouter<TBlockData = RestApiBlockData> =
   VariantsRouter<TBlockData>;
 
 export type WPSingleBlockConfigWithVariants<
-  TComponent extends (props: any) => any = (props: any) => any,
+  TComponent extends ComponentLike = ComponentLike,
   TProps = EmptyObjectOrRecord,
   TBlockData = RestApiBlockData
 > = SingleBlockConfigWithVariants<TComponent, TProps, TBlockData>;
 
 export type WPSingleBlockConfig<
-  TComponent extends (props: any) => any = (props: any) => any,
+  TComponent extends ComponentLike = ComponentLike,
   TBlockData = RestApiBlockData
 > = SingleBlockConfig<TComponent, TBlockData>;
 
 export type WPBlocksConfig<
-  TComponent extends (props: any) => any = (props: any) => any,
+  TComponent extends ComponentLike = ComponentLike,
   TBlockData = RestApiBlockData
 > = BlocksConfig<TComponent, TBlockData>;
 

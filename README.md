@@ -1,6 +1,8 @@
-# cloakwp-js
+# CloakWP
 
-A JavaScript/NPM package that connects your decoupled React frontend to one or more headless WordPress instances. It provides out-of-the-box solutions to all the things you would otherwise be giving up by choosing headless over the traditional approach, such as draft previews, the WP Admin bar (including user authentication), simple data fetching/mutation utilities, incremental static revalidation utilities (enabling content updates to take effect as quickly as server-side rendering, without actually rendering the page on every request), and so on (more details later). It works in tandem with the [CloakWP Plugin](https://github.com/cloak-labs/cloakwp-plugin), installed on your WP instance, to enable an out-of-the-box, harmonious integration.
+Framework-neutral JavaScript APIs for connecting a decoupled frontend to
+WordPress. Framework packages such as `@cloakwp/react` and `@cloakwp/nextjs`
+build on these primitives.
 
 ## Install
 
@@ -8,4 +10,13 @@ A JavaScript/NPM package that connects your decoupled React frontend to one or m
 npm install cloakwp
 ```
 
-Currently in beta. More details and documentation coming soon.
+## Protocol modules
+
+- `cloakwp/auth`: session cookie names, Application Password vs legacy JWT
+  machine auth, and Web Crypto signing primitives
+- `cloakwp/preview`: preview data and signed preview-token verification
+- `cloakwp/revalidation`: signed revalidation request verification and handling
+- `cloakwp/rest`: the native `Request`/`Response` CloakWP API handler
+  (`preview`, `exit-preview`, `revalidate`, `auth/*`)
+
+These modules use web-platform APIs and do not depend on React or Next.js.
