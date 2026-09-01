@@ -288,6 +288,44 @@ test("authorize POST rejects a cross-origin request", async () => {
   assert.equal(response.status, 403);
 });
 
+test("authorize POST trusts x-forwarded-host behind a TLS proxy", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () =>
+    new Response(
+      JSON.stringify({
+        accessToken: "access-token",
+        accessTokenExpiration: Math.floor(Date.now() / 1000) + 900,
+        refreshToken: "refresh-token",
+        refreshTokenExpiration: Math.floor(Date.now() / 1000) + 1209600,
+        wpLoginCode: "login-code",
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+
+  try {
+    const response = await handleCloakWpRequest(
+      new Request("http://127.0.0.1:3000/api/cloakwp/auth/authorize", {
+        method: "POST",
+        headers: {
+          Origin: "https://hyland02.localhost",
+          Host: "127.0.0.1:3000",
+          "x-forwarded-host": "hyland02.localhost",
+          "x-forwarded-proto": "https",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: "grant_type=password&username=ed&password=secret&redirect=/",
+      }),
+      requestOptions({
+        route: ["auth", "authorize"],
+        session: { wordpressUrl: "https://wp.test", secret: "session-secret" },
+      }),
+    );
+    assert.equal(response.status, 302);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("wp-admin handler 302s to establish-session", async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () =>
@@ -324,6 +362,172 @@ test("wp-admin handler 302s to establish-session", async () => {
     assert.equal(
       location.searchParams.get("redirect"),
       "https://wp.test/wp-admin/edit.php",
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("logout POST reads redirect from the form body and establishes WP logout", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (input, init) => {
+    assert.equal(String(input), "https://wp.test/wp-json/cloakwp/auth/logout");
+    const body = JSON.parse(init.body);
+    assert.equal(body.refresh_token, "existing-refresh");
+    return new Response(
+      JSON.stringify({ wpLogoutCode: "logout-code" }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  };
+
+  try {
+    const response = await handleCloakWpRequest(
+      new Request("https://site.test/api/cloakwp/auth/logout", {
+        method: "POST",
+        headers: {
+          Origin: "https://site.test",
+          "Content-Type": "application/x-www-form-urlencoded",
+          cookie: "cloakwp_rt=existing-refresh",
+        },
+        body: "redirect=/portfolio",
+      }),
+      requestOptions({
+        route: ["auth", "logout"],
+        session: { wordpressUrl: "https://wp.test", secret: "session-secret" },
+      }),
+    );
+
+    assert.equal(response.status, 302);
+    const location = new URL(response.headers.get("location"));
+    assert.equal(
+      location.origin + location.pathname,
+      "https://wp.test/wp-json/cloakwp/auth/establish-logout",
+    );
+    assert.equal(location.searchParams.get("code"), "logout-code");
+    assert.equal(
+      location.searchParams.get("redirect"),
+      "https://site.test/portfolio",
+    );
+    const cookies = response.headers.getSetCookie();
+    assert.ok(cookies.some((cookie) => cookie.startsWith("cloakwp_at=") && cookie.includes("Max-Age=0")));
+    assert.ok(cookies.some((cookie) => cookie.startsWith("cloakwp_rt=") && cookie.includes("Max-Age=0")));
+    assert.ok(cookies.some((cookie) => cookie.startsWith("cloakwp_ui=") && cookie.includes("Max-Age=0")));
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("logout POST still clears cookies when the WP refresh token is already revoked", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () =>
+    new Response(
+      JSON.stringify({
+        code: "invalid_grant",
+        message: "Refresh token is invalid or expired.",
+      }),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+
+  try {
+    const response = await handleCloakWpRequest(
+      new Request("https://site.test/api/cloakwp/auth/logout", {
+        method: "POST",
+        headers: {
+          Origin: "https://site.test",
+          "Content-Type": "application/x-www-form-urlencoded",
+          cookie: "cloakwp_rt=stale-refresh",
+        },
+        body: "redirect=/",
+      }),
+      requestOptions({
+        route: ["auth", "logout"],
+        session: { wordpressUrl: "https://wp.test", secret: "session-secret" },
+      }),
+    );
+
+    assert.equal(response.status, 302);
+    assert.equal(response.headers.get("location"), "https://site.test/");
+    const cookies = response.headers.getSetCookie();
+    assert.ok(cookies.some((cookie) => cookie.startsWith("cloakwp_ui=") && cookie.includes("Max-Age=0")));
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("logout GET from wp-admin redirect clears cookies without Origin", async () => {
+  const originalFetch = globalThis.fetch;
+  let fetched = 0;
+  globalThis.fetch = async () => {
+    fetched += 1;
+    return new Response(
+      JSON.stringify({
+        code: "invalid_grant",
+        message: "Refresh token is invalid or expired.",
+      }),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  };
+
+  try {
+    const response = await handleCloakWpRequest(
+      new Request("https://site.test/api/cloakwp/auth/logout", {
+        method: "GET",
+        headers: {
+          Referer: "https://wp.test/wp-login.php?action=logout",
+          cookie: "cloakwp_rt=stale-refresh; cloakwp_ui=1",
+        },
+      }),
+      requestOptions({
+        route: ["auth", "logout"],
+        session: { wordpressUrl: "https://wp.test", secret: "session-secret" },
+      }),
+    );
+
+    assert.equal(response.status, 302);
+    assert.equal(response.headers.get("location"), "https://site.test/");
+    const cookies = response.headers.getSetCookie();
+    assert.ok(cookies.some((cookie) => cookie.startsWith("cloakwp_at=") && cookie.includes("Max-Age=0")));
+    assert.ok(cookies.some((cookie) => cookie.startsWith("cloakwp_ui=") && cookie.includes("Max-Age=0")));
+    assert.equal(fetched, 1);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("wp-admin handler accepts subdirectory multisite admin paths", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () =>
+    new Response(
+      JSON.stringify({
+        accessToken: "access-token",
+        accessTokenExpiration: Math.floor(Date.now() / 1000) + 900,
+        refreshToken: "refresh-token",
+        refreshTokenExpiration: Math.floor(Date.now() / 1000) + 1209600,
+        wpLoginCode: "fresh-code",
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+
+  try {
+    const response = await handleCloakWpRequest(
+      new Request(
+        "https://site.test/api/cloakwp/auth/wp-admin?path=%2Fhyland02%2Fwp-admin%2Fedit.php",
+        { headers: { cookie: "cloakwp_rt=existing-refresh" } },
+      ),
+      requestOptions({
+        route: ["auth", "wp-admin"],
+        session: {
+          wordpressUrl: "https://wp.test/hyland02",
+          secret: "session-secret",
+        },
+      }),
+    );
+
+    assert.equal(response.status, 302);
+    const location = new URL(response.headers.get("location"));
+    assert.equal(
+      location.searchParams.get("redirect"),
+      "https://wp.test/hyland02/wp-admin/edit.php",
     );
   } finally {
     globalThis.fetch = originalFetch;

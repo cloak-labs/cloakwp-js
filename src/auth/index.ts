@@ -19,11 +19,13 @@ export type {
 } from "./machineAuth.js";
 export {
   DEFAULT_LOGIN_PATH,
+  DEFAULT_LOGOUT_PATH,
   SESSION_COOKIE_ACCESS,
   SESSION_COOKIE_HINT,
   SESSION_COOKIE_REFRESH,
   SESSION_SECRET_HEADER,
   hasSessionHint,
+  isWpAdminPath,
   parseCookieHeader,
   wpAdminHandshakePath,
 } from "./session.js";

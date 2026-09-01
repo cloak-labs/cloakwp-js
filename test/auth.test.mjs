@@ -45,3 +45,12 @@ test("session hint cookie is paint-only and handshake URLs stay on Next", () => 
     "/api/cloakwp/auth/wp-admin?path=%2Fwp-admin%2Fedit.php",
   );
 });
+
+test("wp-admin paths include subdirectory multisite admin", async () => {
+  const { isWpAdminPath } = await import("../dist/auth/session.js");
+  assert.equal(isWpAdminPath("/wp-admin"), true);
+  assert.equal(isWpAdminPath("/wp-admin/edit.php"), true);
+  assert.equal(isWpAdminPath("/hyland02/wp-admin/post.php"), true);
+  assert.equal(isWpAdminPath("/wp-admin-not"), false);
+  assert.equal(isWpAdminPath("/hyland02/pages"), false);
+});

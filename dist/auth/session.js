@@ -3,6 +3,7 @@ export const SESSION_COOKIE_REFRESH = "cloakwp_rt";
 export const SESSION_COOKIE_HINT = "cloakwp_ui";
 export const SESSION_SECRET_HEADER = "X-CloakWP-Secret";
 export const DEFAULT_LOGIN_PATH = "/__cloakwp/login";
+export const DEFAULT_LOGOUT_PATH = "/__cloakwp/logout";
 export function parseCookieHeader(header) {
     const cookies = {};
     if (!header) {
@@ -32,4 +33,8 @@ export function hasSessionHint(cookieHeader) {
 export function wpAdminHandshakePath(wpAdminPath) {
     const path = wpAdminPath.startsWith("/") ? wpAdminPath : `/${wpAdminPath}`;
     return `/api/cloakwp/auth/wp-admin?path=${encodeURIComponent(path)}`;
+}
+/** True for `/wp-admin` and subdirectory multisite paths like `/hyland02/wp-admin/edit.php`. */
+export function isWpAdminPath(pathname) {
+    return /(?:^|\/)wp-admin(?:\/|$)/.test(pathname);
 }

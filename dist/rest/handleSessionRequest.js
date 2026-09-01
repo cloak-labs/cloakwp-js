@@ -1,22 +1,49 @@
-import { DEFAULT_LOGIN_PATH, SESSION_COOKIE_ACCESS, SESSION_COOKIE_HINT, SESSION_COOKIE_REFRESH, SESSION_SECRET_HEADER, parseCookieHeader, } from "../auth/session.js";
+import { DEFAULT_LOGIN_PATH, SESSION_COOKIE_ACCESS, SESSION_COOKIE_HINT, SESSION_COOKIE_REFRESH, SESSION_SECRET_HEADER, isWpAdminPath, parseCookieHeader, } from "../auth/session.js";
 function json(data, status = 200) {
     return Response.json(data, { status });
 }
+/**
+ * Reconstruct the public request URL when the app sits behind a TLS
+ * proxy (portless, Vercel). `request.url` is often the internal
+ * `http://127.0.0.1:port` origin, which would fail same-origin checks
+ * against the browser's `https://{slug}.localhost` Origin/Referer.
+ */
+function publicRequestUrl(request) {
+    const url = new URL(request.url);
+    const forwardedHost = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+    if (!forwardedHost) {
+        return url;
+    }
+    const host = forwardedHost.split(",")[0].trim();
+    const forwardedProto = request.headers.get("x-forwarded-proto");
+    const proto = (forwardedProto?.split(",")[0].trim() || url.protocol.replace(":", "")).replace(/:$/, "");
+    return new URL(`${proto}://${host}${url.pathname}${url.search}${url.hash}`);
+}
 function requestOrigin(request) {
-    return new URL(request.url).origin;
+    return publicRequestUrl(request).origin;
 }
 function isSameOriginMutation(request) {
     const origin = request.headers.get("origin");
     const expected = requestOrigin(request);
     if (origin) {
-        return origin === expected;
+        if (origin === expected) {
+            return true;
+        }
+        try {
+            return new URL(origin).host === publicRequestUrl(request).host;
+        }
+        catch {
+            return false;
+        }
     }
     const referer = request.headers.get("referer");
     if (!referer) {
         return false;
     }
     try {
-        return new URL(referer).origin === expected;
+        const refererUrl = new URL(referer);
+        return (refererUrl.origin === expected ||
+            refererUrl.host === publicRequestUrl(request).host);
     }
     catch {
         return false;
@@ -90,7 +117,7 @@ function wordpressOrigin(wordpressUrl) {
     return new URL(wordpressUrl).origin;
 }
 function loginRedirect(request, loginPath, extra) {
-    const url = new URL(loginPath, request.url);
+    const url = new URL(loginPath, publicRequestUrl(request));
     for (const [key, value] of Object.entries(extra)) {
         url.searchParams.set(key, value);
     }
@@ -100,9 +127,9 @@ function loginRedirect(request, loginPath, extra) {
     });
 }
 function safeFrontendRedirect(request, candidate) {
-    const fallback = new URL("/", request.url).toString();
+    const fallback = new URL("/", publicRequestUrl(request)).toString();
     try {
-        const resolved = new URL(candidate, request.url);
+        const resolved = new URL(candidate, publicRequestUrl(request));
         if (resolved.origin !== requestOrigin(request)) {
             return fallback;
         }
@@ -116,7 +143,7 @@ function wpAdminRedirect(wordpressUrl, path) {
     const origin = wordpressOrigin(wordpressUrl);
     const normalized = path.startsWith("/") ? path : `/${path}`;
     const target = new URL(normalized, `${origin}/`);
-    if (target.origin !== origin || !target.pathname.startsWith("/wp-admin")) {
+    if (target.origin !== origin || !isWpAdminPath(target.pathname)) {
         return null;
     }
     return target.toString();
@@ -148,10 +175,14 @@ function establishLocation(session, code, redirect, path = "/auth/establish-sess
 export async function handleSessionRequest(request, route, session) {
     const action = route[1];
     const loginPath = session.loginPath || DEFAULT_LOGIN_PATH;
-    const secure = new URL(request.url).protocol === "https:";
+    const publicUrl = publicRequestUrl(request);
+    const secure = publicUrl.protocol === "https:";
     const cookies = parseCookieHeader(request.headers.get("cookie"));
-    if (!session.wordpressUrl || !session.secret) {
-        return json({ error: "CloakWP session is not configured." }, 503);
+    if (!session.wordpressUrl) {
+        return json({ error: "CloakWP WordPress URL is not configured." }, 503);
+    }
+    if (!session.secret) {
+        return json({ error: "CloakWP session secret is not configured." }, 503);
     }
     switch (action) {
         case "authorize": {
@@ -214,16 +245,20 @@ export async function handleSessionRequest(request, route, session) {
             return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
         }
         case "logout": {
-            if (request.method !== "POST") {
+            if (request.method !== "GET" && request.method !== "POST") {
                 return json({ error: "Method not allowed." }, 405);
             }
-            if (!isSameOriginMutation(request)) {
+            // GET is the wp-admin logout landing URL (document navigation, so no
+            // Origin). POST stays same-origin for AdminBar / the logout form.
+            if (request.method === "POST" && !isSameOriginMutation(request)) {
                 return json({ error: "Invalid origin." }, 403);
             }
-            const url = new URL(request.url);
-            const frontendRedirect = safeFrontendRedirect(request, url.searchParams.get("redirect") || "/");
+            const body = request.method === "POST" ? await readBody(request) : {};
+            const frontendRedirect = safeFrontendRedirect(request, body.redirect || publicUrl.searchParams.get("redirect") || "/");
             const refreshToken = cookies[SESSION_COOKIE_REFRESH] || "";
-            const headers = new Headers();
+            const headers = new Headers({
+                "Cache-Control": "private, no-store",
+            });
             clearSessionCookies(headers, secure);
             if (refreshToken) {
                 const response = await fetch(wordpressRestUrl(session.wordpressUrl, "/auth/logout"), {
@@ -250,7 +285,7 @@ export async function handleSessionRequest(request, route, session) {
             return new Response(null, { status: 302, headers });
         }
         case "wp-admin": {
-            const path = new URL(request.url).searchParams.get("path") || "/wp-admin/";
+            const path = publicUrl.searchParams.get("path") || "/wp-admin/";
             const redirect = wpAdminRedirect(session.wordpressUrl, path);
             if (!redirect) {
                 return json({ error: "Invalid wp-admin path." }, 400);
