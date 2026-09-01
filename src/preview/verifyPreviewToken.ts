@@ -10,6 +10,7 @@ export type PreviewTokenPayload = {
   previewKey: string;
   pathname: string;
   exp: number;
+  wpOrigin?: string;
 };
 
 export type PreviewTokenVerification =
@@ -33,20 +34,43 @@ export type VerifyPreviewTokenOptions = {
   clockSkewSeconds?: number;
 };
 
+function isHttpOrigin(value: unknown): value is string {
+  if (typeof value !== "string" || value === "") {
+    return false;
+  }
+  try {
+    const url = new URL(value);
+    return (
+      (url.protocol === "https:" || url.protocol === "http:") &&
+      url.origin === value
+    );
+  } catch {
+    return false;
+  }
+}
+
 function isPreviewTokenPayload(value: unknown): value is PreviewTokenPayload {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     return false;
   }
 
   const payload = value as Record<string, unknown>;
-  return (
-    typeof payload.previewKey === "string" &&
-    payload.previewKey.length > 0 &&
-    typeof payload.pathname === "string" &&
-    payload.pathname.startsWith("/") &&
-    Number.isSafeInteger(payload.exp) &&
-    (payload.exp as number) > 0
-  );
+  if (
+    typeof payload.previewKey !== "string" ||
+    payload.previewKey.length === 0 ||
+    typeof payload.pathname !== "string" ||
+    !payload.pathname.startsWith("/") ||
+    !Number.isSafeInteger(payload.exp) ||
+    (payload.exp as number) <= 0
+  ) {
+    return false;
+  }
+
+  if (payload.wpOrigin !== undefined && !isHttpOrigin(payload.wpOrigin)) {
+    return false;
+  }
+
+  return true;
 }
 
 export async function verifyPreviewToken(

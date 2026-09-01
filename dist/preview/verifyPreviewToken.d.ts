@@ -2,6 +2,7 @@ export type PreviewTokenPayload = {
     previewKey: string;
     pathname: string;
     exp: number;
+    wpOrigin?: string;
 };
 export type PreviewTokenVerification = {
     valid: true;

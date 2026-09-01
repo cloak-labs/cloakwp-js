@@ -206,6 +206,78 @@ export function getConfiguredWpOrigin(): string | null {
   }
 }
 
+const TRUSTED_WP_HOSTS = new Set([
+  "wp.localhost",
+  "localhost",
+  "staging.pillarlabs.co",
+  "sites.cloaklabs.co",
+]);
+
+const TRUSTED_WP_HOST_SUFFIXES = [
+  ".pillarlabs.co",
+  ".cloaklabs.co",
+  ".localhost",
+] as const;
+
+export function isTrustedWpOrigin(origin: string): boolean {
+  try {
+    const url = new URL(origin);
+    if (url.protocol !== "https:" && url.protocol !== "http:") return false;
+    if (url.origin !== origin) return false;
+    const host = url.hostname;
+    if (TRUSTED_WP_HOSTS.has(host)) return true;
+    return TRUSTED_WP_HOST_SUFFIXES.some(
+      (suffix) => host.endsWith(suffix) && host.length > suffix.length,
+    );
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Origin to target for preview iframe postMessage.
+ *
+ * Prefer the HMAC-bound `wpOrigin` from the preview token (the WP admin that
+ * issued it). Fall back to the actual embedder (ancestorOrigins / referrer)
+ * when that origin is an agency WP host — this covers local wp-admin pointed
+ * at a staging DB while NEXT_PUBLIC_WP_ENVIRONMENT is still "staging".
+ */
+export function resolvePreviewTargetOrigin(
+  preferred?: string | null,
+): string | null {
+  if (preferred) {
+    try {
+      const url = new URL(preferred);
+      if (
+        (url.protocol === "https:" || url.protocol === "http:") &&
+        url.origin === preferred
+      ) {
+        return preferred;
+      }
+    } catch {
+      /* ignore invalid preferred origin */
+    }
+  }
+
+  if (typeof window !== "undefined") {
+    const ancestors = window.location.ancestorOrigins;
+    if (ancestors && ancestors.length > 0) {
+      const topOrigin = ancestors[ancestors.length - 1];
+      if (isTrustedWpOrigin(topOrigin)) return topOrigin;
+    }
+    if (document.referrer) {
+      try {
+        const referrerOrigin = new URL(document.referrer).origin;
+        if (isTrustedWpOrigin(referrerOrigin)) return referrerOrigin;
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+
+  return getConfiguredWpOrigin();
+}
+
 function resolvePreviewMessageContext(
   context?: PreviewMessageContext,
 ): Required<PreviewMessageContext> | null {
@@ -214,7 +286,7 @@ function resolvePreviewMessageContext(
     (typeof window !== "undefined"
       ? new URLSearchParams(window.location.search).get("previewKey") ?? ""
       : "");
-  const targetOrigin = context?.targetOrigin ?? getConfiguredWpOrigin();
+  const targetOrigin = context?.targetOrigin ?? resolvePreviewTargetOrigin();
   return previewKey && targetOrigin ? { previewKey, targetOrigin } : null;
 }
 
@@ -238,7 +310,7 @@ function isMessageFromWpEditor(
 
 export function sendPreviewReadyToWp(
   previewKey: string,
-  targetOrigin = getConfiguredWpOrigin(),
+  targetOrigin = resolvePreviewTargetOrigin(),
 ): void {
   if (!previewKey || !targetOrigin) return;
   postMessageToWpEditor(
@@ -255,7 +327,7 @@ export function handleWPBlockIframeMessage<BlockData = unknown>(
   event: MessageEvent,
   {
     previewKey,
-    targetOrigin = getConfiguredWpOrigin(),
+    targetOrigin = resolvePreviewTargetOrigin(),
     onBlockDataReceipt,
   }: HandlePreviewMessageOptions<BlockData>,
 ): void {

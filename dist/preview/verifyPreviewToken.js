@@ -1,16 +1,35 @@
 import { base64UrlToBytes, constantTimeBytesEqual, hmacSha256, } from "../auth/crypto.js";
 const textDecoder = new TextDecoder();
+function isHttpOrigin(value) {
+    if (typeof value !== "string" || value === "") {
+        return false;
+    }
+    try {
+        const url = new URL(value);
+        return ((url.protocol === "https:" || url.protocol === "http:") &&
+            url.origin === value);
+    }
+    catch {
+        return false;
+    }
+}
 function isPreviewTokenPayload(value) {
     if (!value || typeof value !== "object" || Array.isArray(value)) {
         return false;
     }
     const payload = value;
-    return (typeof payload.previewKey === "string" &&
-        payload.previewKey.length > 0 &&
-        typeof payload.pathname === "string" &&
-        payload.pathname.startsWith("/") &&
-        Number.isSafeInteger(payload.exp) &&
-        payload.exp > 0);
+    if (typeof payload.previewKey !== "string" ||
+        payload.previewKey.length === 0 ||
+        typeof payload.pathname !== "string" ||
+        !payload.pathname.startsWith("/") ||
+        !Number.isSafeInteger(payload.exp) ||
+        payload.exp <= 0) {
+        return false;
+    }
+    if (payload.wpOrigin !== undefined && !isHttpOrigin(payload.wpOrigin)) {
+        return false;
+    }
+    return true;
 }
 export async function verifyPreviewToken(token, secret, { now = Date.now(), clockSkewSeconds = 30, } = {}) {
     if (!token) {

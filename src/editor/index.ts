@@ -7,6 +7,8 @@ export {
   applyPreviewViewportTokens,
   PREVIEW_VIEWPORT_CSS_VARS,
   getConfiguredWpOrigin,
+  isTrustedWpOrigin,
+  resolvePreviewTargetOrigin,
   sendPreviewReadyToWp,
 } from "./acfBlockDecoupledPreview";
 export type {

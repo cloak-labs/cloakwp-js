@@ -23,6 +23,16 @@ export declare const sendBlockHeightToWP: (h?: number | null, context?: PreviewM
  */
 export declare const getDocumentHeight: () => number;
 export declare function getConfiguredWpOrigin(): string | null;
+export declare function isTrustedWpOrigin(origin: string): boolean;
+/**
+ * Origin to target for preview iframe postMessage.
+ *
+ * Prefer the HMAC-bound `wpOrigin` from the preview token (the WP admin that
+ * issued it). Fall back to the actual embedder (ancestorOrigins / referrer)
+ * when that origin is an agency WP host — this covers local wp-admin pointed
+ * at a staging DB while NEXT_PUBLIC_WP_ENVIRONMENT is still "staging".
+ */
+export declare function resolvePreviewTargetOrigin(preferred?: string | null): string | null;
 export declare function sendPreviewReadyToWp(previewKey: string, targetOrigin?: string): void;
 export declare function handleWPBlockIframeMessage<BlockData = unknown>(event: MessageEvent, { previewKey, targetOrigin, onBlockDataReceipt, }: HandlePreviewMessageOptions<BlockData>): void;
 export declare const watchForDocumentHeightChanges: (options?: PreviewMessageContext & {
