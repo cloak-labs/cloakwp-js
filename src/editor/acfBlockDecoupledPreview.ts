@@ -51,6 +51,13 @@ let editorViewportHeight = 0;
 const editorViewportListeners = new Set<(h: number) => void>();
 
 /**
+ * Only viewport-dependent blocks opt into the one-screen bootstrap. Ordinary
+ * blocks can report their natural height as soon as their content mounts.
+ */
+let previewUsesViewportHeight = false;
+const previewSizingModeListeners = new Set<(enabled: boolean) => void>();
+
+/**
  * When fully viewport-tied content is pinned, raw measurements are
  * self-referential and must not be reported (e.g. in response to WP's
  * "getHeight" request) — report the pin instead.
@@ -64,10 +71,10 @@ let lastSentHeight: number | null = null;
  * While true, suppress unsolicited height posts until the editor sends its
  * canvas viewport reference (or the bootstrap timeout elapses).
  *
- * Start true so the empty `#root` (before the Server Action paints) cannot
- * report getDocumentHeight()'s 20px floor and collapse the iframe.
+ * Enabled only for viewport-dependent previews. Empty `#root` measurements
+ * are independently suppressed by `previewHasBlockContent()`.
  */
-let deferHeightUntilEditorViewport = true;
+let deferHeightUntilEditorViewport = false;
 
 export type PreviewMessageContext = {
   previewKey: string;
@@ -157,6 +164,11 @@ const getOverflowingContentBottom = (root: HTMLElement) => {
 
   const nodes = root.querySelectorAll("*");
   for (let i = 0; i < nodes.length; i++) {
+    // Cursor overlays and similar UI are often parked far off-screen with a
+    // transform while idle. They are not block content and must not inflate
+    // the preview iframe; skip the marker and its entire subtree.
+    if (nodes[i].closest('[data-cloakwp-preview-height="ignore"]')) continue;
+
     const rect = nodes[i].getBoundingClientRect();
     if (rect.width <= 0 && rect.height <= 0) continue;
     maxBottom = Math.max(maxBottom, rect.bottom);
@@ -351,6 +363,7 @@ export function handleWPBlockIframeMessage<BlockData = unknown>(
     previewKey?: unknown;
     blockData?: unknown;
     bodyClassName?: unknown;
+    previewUsesViewportHeight?: unknown;
     previewViewportHeight?: unknown;
   };
 
@@ -366,10 +379,6 @@ export function handleWPBlockIframeMessage<BlockData = unknown>(
     return;
   }
 
-  if (payload.blockData && typeof payload.blockData === "object") {
-    debugLog("blockData received from WP: ", payload.blockData);
-    onBlockDataReceipt?.(payload.blockData as BlockData);
-  }
   if (payload.bodyClassName) {
     // WP sets classes on the iframe <body> (color themes / dark mode).
     debugLog("bodyClassName received from WP: ", payload);
@@ -380,6 +389,13 @@ export function handleWPBlockIframeMessage<BlockData = unknown>(
       document.body.classList.add(...bodyClassName.split(" "));
     else if (typeof bodyClassName === "string")
       document.body.classList.add(bodyClassName);
+  }
+  if (typeof payload.previewUsesViewportHeight === "boolean") {
+    const next = payload.previewUsesViewportHeight;
+    if (next !== previewUsesViewportHeight) {
+      previewUsesViewportHeight = next;
+      previewSizingModeListeners.forEach((listener) => listener(next));
+    }
   }
   if (
     typeof payload.previewViewportHeight === "number" &&
@@ -393,6 +409,10 @@ export function handleWPBlockIframeMessage<BlockData = unknown>(
       applyPreviewViewportTokens(next);
       editorViewportListeners.forEach((listener) => listener(next));
     }
+  }
+  if (payload.blockData && typeof payload.blockData === "object") {
+    debugLog("blockData received from WP: ", payload.blockData);
+    onBlockDataReceipt?.(payload.blockData as BlockData);
   }
 }
 
@@ -452,8 +472,9 @@ export const watchForDocumentHeightChanges = (
    * viewport reference. Without this, an early natural-height measure (~600px
    * for min-h heroes in a small iframe) wins and traps the preview.
    */
-  let bootstrapPending = true;
-  deferHeightUntilEditorViewport = true;
+  let bootstrapPending = previewUsesViewportHeight;
+  let firstContentReportPending = true;
+  deferHeightUntilEditorViewport = previewUsesViewportHeight;
   /**
    * After a bootstrap height report, ignore coupling inference on the next
    * viewport resize — min-h heroes look partially tied when growing from a
@@ -495,27 +516,29 @@ export const watchForDocumentHeightChanges = (
 
     const contentHeight = getDocumentHeight();
     const viewportHeight = window.innerHeight;
+    const iframeAlreadyTall =
+      viewportHeight >= editorViewportHeight - BOOTSTRAP_GAP_PX;
+    const fillsEditor =
+      contentHeight >= editorViewportHeight - BOOTSTRAP_GAP_PX;
 
-    if (contentHeight >= editorViewportHeight - BOOTSTRAP_GAP_PX) {
+    if (fillsEditor) {
       finishBootstrap();
       if (Math.abs(contentHeight - viewportHeight) > REPORT_TOLERANCE_PX) {
-        // Large overflow (abspos hero copy, etc.) should resize immediately;
-        // small drift can wait for the content debounce.
-        if (contentHeight - viewportHeight > BOOTSTRAP_GAP_PX) {
-          report(contentHeight, "bootstrap-aligned");
-        } else {
-          reportDebounced(contentHeight, "bootstrap-aligned");
-        }
+        // Immediate: remounts cancel reportDebounced and leave the iframe
+        // stuck at the editor-viewport bootstrap height (~860).
+        firstContentReportPending = false;
+        report(contentHeight, "bootstrap-aligned");
       }
       return false;
     }
 
-    // Genuinely short blocks should shrink normally — not bootstrap to one screen.
-    const iframeAlreadyTall =
-      viewportHeight >= editorViewportHeight - BOOTSTRAP_GAP_PX;
-    if (iframeAlreadyTall && contentHeight < 500) {
+    // Iframe was pre-sized to one editor screen. Short *and* mid-height
+    // blocks (cards/images ~500–700) must shrink — the old `< 500` cutoff
+    // left those pinned at ~860.
+    if (iframeAlreadyTall) {
       finishBootstrap();
-      reportDebounced(contentHeight, "content");
+      firstContentReportPending = false;
+      report(contentHeight, "content");
       return false;
     }
 
@@ -706,6 +729,13 @@ export const watchForDocumentHeightChanges = (
         if (tryViewportBootstrap()) return;
       }
 
+      if (firstContentReportPending && !couplingKnown) {
+        firstContentReportPending = false;
+        cancelDebounced();
+        report(contentHeight, "first-content");
+        return;
+      }
+
       if (couplingKnown) {
         // Keep the measured ratio; shift the offset and re-derive the target
         // (e.g. content below a 100vh hero grew).
@@ -736,6 +766,26 @@ export const watchForDocumentHeightChanges = (
     // Reference for "one screen" arrived/changed; re-derive pinned targets.
     if (couplingKnown && couplingR >= PIN_RATIO) {
       applyModel(true);
+    }
+  };
+
+  const onPreviewSizingMode = (enabled: boolean) => {
+    couplingKnown = false;
+    pinnedHeight = null;
+    valveTimestamps.length = 0;
+    cancelDebounced();
+
+    if (enabled) {
+      bootstrapPending = true;
+      deferHeightUntilEditorViewport = true;
+      tryViewportBootstrap();
+      return;
+    }
+
+    finishBootstrap();
+    if (previewHasBlockContent()) {
+      firstContentReportPending = false;
+      report(getDocumentHeight(), "compact-mode");
     }
   };
 
@@ -787,6 +837,7 @@ export const watchForDocumentHeightChanges = (
     // viewport baseline go stale and mis-classify a later edit as coupled.
     window.addEventListener("resize", evaluate);
     editorViewportListeners.add(onEditorViewport);
+    previewSizingModeListeners.add(onPreviewSizingMode);
 
     bootstrapTimer = setTimeout(() => {
       bootstrapTimer = null;
@@ -795,8 +846,19 @@ export const watchForDocumentHeightChanges = (
       // is still painting — ResizeObserver will bootstrap when content lands.
       if (!previewHasBlockContent()) return;
       finishBootstrap();
-      evaluate();
+      report(getDocumentHeight(), "bootstrap-timeout");
     }, 2500);
+
+    // Remounts (React Strict Mode) reconnect this observer after content is
+    // already painted, so there is no dC to trigger evaluate()'s report path.
+    if (previewHasBlockContent()) {
+      if (previewUsesViewportHeight && editorViewportHeight > 0) {
+        tryViewportBootstrap();
+      } else if (!previewUsesViewportHeight) {
+        firstContentReportPending = false;
+        report(getDocumentHeight(), "initial-content");
+      }
+    }
 
     // Preserve the public API (callers hold a ResizeObserver and call
     // disconnect()) while still cleaning up our extra listeners.
@@ -809,6 +871,7 @@ export const watchForDocumentHeightChanges = (
       if (mutationRaf) cancelAnimationFrame(mutationRaf);
       if (asyncLayoutRaf) cancelAnimationFrame(asyncLayoutRaf);
       editorViewportListeners.delete(onEditorViewport);
+      previewSizingModeListeners.delete(onPreviewSizingMode);
       clearBootstrapTimer();
       cancelDebounced();
       originalDisconnect();
