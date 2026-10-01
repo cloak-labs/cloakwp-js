@@ -14,7 +14,7 @@ export function assertMachineAuthNotExposed(auth, isBrowser) {
         return;
     }
     if (auth?.jwt || auth?.applicationPassword) {
-        throw new Error("You're exposing WordPress machine credentials (an application password or WP_JWT) to the browser. Store them in server-only environment variables and pass them into wpRestApiClient only on the server.");
+        throw new Error("You're exposing WordPress machine credentials (an application password or JWT) to the browser. Store them in server-only environment variables and pass them into wpRestApiClient only on the server.");
     }
 }
 export function resolveMachineAuth(auth) {
@@ -30,7 +30,7 @@ export function resolveMachineAuth(auth) {
     if (jwt) {
         if (!warnedJwtFallback) {
             warnedJwtFallback = true;
-            console.warn("CloakWP: WP_JWT is a deprecated machine-auth fallback. Set WP_APPLICATION_USER and WP_APPLICATION_PASSWORD (WordPress Application Passwords) and redeploy. jwt-auth will be removed after every site has migrated.");
+            console.warn("CloakWP: WP_JWT is a deprecated machine-auth fallback. Set WP_APPLICATION_USER and WP_APPLICATION_PASSWORD (WordPress Application Passwords) and redeploy. jwt-auth will phase out.");
         }
         return {
             authorization: `Bearer ${jwt}`,

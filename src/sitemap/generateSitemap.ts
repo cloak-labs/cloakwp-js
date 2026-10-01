@@ -19,6 +19,16 @@ export const generateSitemap = (
                       <lastmod>${route.modified}${
                         route.modified.endsWith("Z") ? "" : "Z"
                       }</lastmod>
+                      ${
+                        route.changeFrequency || route.changefreq
+                          ? `<changefreq>${route.changeFrequency ?? route.changefreq}</changefreq>`
+                          : ""
+                      }
+                      ${
+                        route.priority != null
+                          ? `<priority>${route.priority}</priority>`
+                          : ""
+                      }
                   </url>
               `;
             })

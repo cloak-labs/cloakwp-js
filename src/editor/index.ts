@@ -8,6 +8,7 @@ export {
   PREVIEW_VIEWPORT_CSS_VARS,
   getConfiguredWpOrigin,
   isTrustedWpOrigin,
+  previewOriginsMatch,
   resolvePreviewTargetOrigin,
   sendPreviewReadyToWp,
 } from "./acfBlockDecoupledPreview";

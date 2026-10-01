@@ -51,6 +51,13 @@ let editorViewportHeight = 0;
 const editorViewportListeners = new Set<(h: number) => void>();
 
 /**
+ * Only viewport-dependent blocks opt into the one-screen bootstrap. Ordinary
+ * blocks can report their natural height as soon as their content mounts.
+ */
+let previewUsesViewportHeight = false;
+const previewSizingModeListeners = new Set<(enabled: boolean) => void>();
+
+/**
  * When fully viewport-tied content is pinned, raw measurements are
  * self-referential and must not be reported (e.g. in response to WP's
  * "getHeight" request) — report the pin instead.
@@ -64,10 +71,10 @@ let lastSentHeight: number | null = null;
  * While true, suppress unsolicited height posts until the editor sends its
  * canvas viewport reference (or the bootstrap timeout elapses).
  *
- * Start true so the empty `#root` (before the Server Action paints) cannot
- * report getDocumentHeight()'s 20px floor and collapse the iframe.
+ * Enabled only for viewport-dependent previews. Empty `#root` measurements
+ * are independently suppressed by `previewHasBlockContent()`.
  */
-let deferHeightUntilEditorViewport = true;
+let deferHeightUntilEditorViewport = false;
 
 export type PreviewMessageContext = {
   previewKey: string;
@@ -157,6 +164,11 @@ const getOverflowingContentBottom = (root: HTMLElement) => {
 
   const nodes = root.querySelectorAll("*");
   for (let i = 0; i < nodes.length; i++) {
+    // Cursor overlays and similar UI are often parked far off-screen with a
+    // transform while idle. They are not block content and must not inflate
+    // the preview iframe; skip the marker and its entire subtree.
+    if (nodes[i].closest('[data-cloakwp-preview-height="ignore"]')) continue;
+
     const rect = nodes[i].getBoundingClientRect();
     if (rect.width <= 0 && rect.height <= 0) continue;
     maxBottom = Math.max(maxBottom, rect.bottom);
@@ -173,6 +185,10 @@ const getOverflowingContentBottom = (root: HTMLElement) => {
  * Content height for the preview iframe — must NOT use documentElement's
  * offset/client height. Those track the iframe viewport, so when WP sizes the
  * iframe to H (or H+1) the next report becomes H+1 and each edit grows by 1px.
+ *
+ * `#root.scrollHeight` includes the first child's CSS margins. Gutenberg already
+ * applies those same margins on the outer `.wp-block`, so counting them here
+ * double-spaces the preview (hero "too tall by the editor margin").
  */
 export const getDocumentHeight = () => {
   const minHeight = 20;
@@ -180,12 +196,33 @@ export const getDocumentHeight = () => {
 
   const root = document.getElementById("root");
   if (root) {
-    // offsetTop accounts for body/margins above #root; scrollHeight covers
-    // in-flow overflow of the root's box. Descendant rects cover abspos /
-    // specified-height overflow that scrollHeight misses.
     const top = root.offsetTop;
-    const boxHeight = Math.max(root.scrollHeight, root.offsetHeight);
+    const hero = document.getElementById("hero");
+    const child = (hero ?? root.firstElementChild) as HTMLElement | null;
     const overflowing = getOverflowingContentBottom(root);
+
+    if (child) {
+      const borderBox = Math.ceil(top + child.offsetTop + child.offsetHeight);
+      const overflowY = getComputedStyle(child).overflowY;
+      const clipsOverflow = overflowY === "hidden" || overflowY === "clip";
+      const isViewportHero =
+        !!hero &&
+        editorViewportHeight > 0 &&
+        Math.abs(child.offsetHeight - editorViewportHeight) <= 48;
+
+      // 100vh heroes: in-flow/abspos overflow and descendant rects inflate
+      // the report (~1473 vs 860) and then feedback-loop as the iframe grows.
+      // overflow:hidden heroes (stretched bg-image): scaled SoftBlobs sit
+      // outside the box but are clipped — counting them adds empty iframe
+      // space that looks like a bottom margin.
+      if (isViewportHero || clipsOverflow) {
+        return Math.max(minHeight, borderBox);
+      }
+
+      return Math.max(minHeight, borderBox, overflowing);
+    }
+
+    const boxHeight = Math.max(root.scrollHeight, root.offsetHeight);
     return Math.max(minHeight, Math.ceil(top + boxHeight), overflowing);
   }
 
@@ -235,46 +272,73 @@ export function isTrustedWpOrigin(origin: string): boolean {
 }
 
 /**
- * Origin to target for preview iframe postMessage.
+ * True when two origins are the same browsing origin, or the http/https
+ * variant of the same local WordPress host (Docker + portless TLS).
+ */
+export function previewOriginsMatch(
+  eventOrigin: string,
+  targetOrigin: string | null | undefined,
+): boolean {
+  if (!targetOrigin) return false;
+  if (eventOrigin === targetOrigin) return true;
+  try {
+    const eventUrl = new URL(eventOrigin);
+    const targetUrl = new URL(targetOrigin);
+    if (eventUrl.hostname !== targetUrl.hostname || eventUrl.port !== targetUrl.port) {
+      return false;
+    }
+    return isTrustedWpOrigin(eventOrigin) && isTrustedWpOrigin(targetOrigin);
+  } catch {
+    return false;
+  }
+}
+
+function isHttpOrigin(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return (
+      (url.protocol === "https:" || url.protocol === "http:") &&
+      url.origin === value
+    );
+  } catch {
+    return false;
+  }
+}
+
+function originFromTrustedEmbedder(): string | null {
+  if (typeof window === "undefined") return null;
+
+  const ancestors = window.location.ancestorOrigins;
+  if (ancestors && ancestors.length > 0) {
+    const topOrigin = ancestors[ancestors.length - 1];
+    if (isTrustedWpOrigin(topOrigin)) return topOrigin;
+  }
+
+  if (document.referrer) {
+    try {
+      const referrerOrigin = new URL(document.referrer).origin;
+      if (isTrustedWpOrigin(referrerOrigin)) return referrerOrigin;
+    } catch {
+      /* ignore */
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Origin of the WP admin that embedded this iframe.
  *
- * Prefer the HMAC-bound `wpOrigin` from the preview token (the WP admin that
- * issued it). Fall back to the actual embedder (ancestorOrigins / referrer)
- * when that origin is an agency WP host — this covers local wp-admin pointed
- * at a staging DB while NEXT_PUBLIC_WP_ENVIRONMENT is still "staging".
+ * Prefer the actual embedder (ancestorOrigins / referrer). A token `wpOrigin`
+ * taken from WP `home_url()` is wrong when local wp-admin is using a staging
+ * DB (home is staging.pillarlabs.co, the window is wp.localhost).
  */
 export function resolvePreviewTargetOrigin(
   preferred?: string | null,
 ): string | null {
-  if (preferred) {
-    try {
-      const url = new URL(preferred);
-      if (
-        (url.protocol === "https:" || url.protocol === "http:") &&
-        url.origin === preferred
-      ) {
-        return preferred;
-      }
-    } catch {
-      /* ignore invalid preferred origin */
-    }
-  }
-
-  if (typeof window !== "undefined") {
-    const ancestors = window.location.ancestorOrigins;
-    if (ancestors && ancestors.length > 0) {
-      const topOrigin = ancestors[ancestors.length - 1];
-      if (isTrustedWpOrigin(topOrigin)) return topOrigin;
-    }
-    if (document.referrer) {
-      try {
-        const referrerOrigin = new URL(document.referrer).origin;
-        if (isTrustedWpOrigin(referrerOrigin)) return referrerOrigin;
-      } catch {
-        /* ignore */
-      }
-    }
-  }
-
+  const embedder = originFromTrustedEmbedder();
+  if (embedder) return embedder;
+  if (preferred && isHttpOrigin(preferred)) return preferred;
   return getConfiguredWpOrigin();
 }
 
@@ -290,11 +354,31 @@ function resolvePreviewMessageContext(
   return previewKey && targetOrigin ? { previewKey, targetOrigin } : null;
 }
 
+function postMessageTargetOrigins(targetOrigin: string): string[] {
+  const origins = [targetOrigin];
+  try {
+    const url = new URL(targetOrigin);
+    const isLocal =
+      url.hostname === "localhost" ||
+      url.hostname === "wp.localhost" ||
+      url.hostname.endsWith(".localhost");
+    if (!isLocal || !isTrustedWpOrigin(targetOrigin)) return origins;
+    const altProtocol = url.protocol === "https:" ? "http:" : "https:";
+    const alt = `${altProtocol}//${url.host}`;
+    if (alt !== targetOrigin) origins.push(alt);
+  } catch {
+    /* ignore */
+  }
+  return origins;
+}
+
 function postMessageToWpEditor(payload: unknown, targetOrigin: string): void {
-  // Gutenberg canvas nesting can put the listener on parent or top.
-  window.parent?.postMessage(payload, targetOrigin);
-  if (window.top && window.top !== window.parent) {
-    window.top.postMessage(payload, targetOrigin);
+  if (!targetOrigin) return;
+  for (const origin of postMessageTargetOrigins(targetOrigin)) {
+    window.parent?.postMessage(payload, origin);
+    if (window.top && window.top !== window.parent) {
+      window.top.postMessage(payload, origin);
+    }
   }
 }
 
@@ -302,10 +386,11 @@ function isMessageFromWpEditor(
   event: MessageEvent,
   targetOrigin: string,
 ): boolean {
-  const fromEmbedder =
-    event.source === window.parent ||
-    (window.top != null && event.source === window.top);
-  return fromEmbedder && event.origin === targetOrigin;
+  // Origin is the security boundary. Gutenberg nests the preview iframe in
+  // the editor canvas, so event.source may be top, the canvas (parent), or
+  // another same-origin admin frame — requiring source === parent|top
+  // dropped sidebar field updates after preview URLs moved to HMAC tokens.
+  return previewOriginsMatch(event.origin, targetOrigin);
 }
 
 export function sendPreviewReadyToWp(
@@ -331,7 +416,8 @@ export function handleWPBlockIframeMessage<BlockData = unknown>(
     onBlockDataReceipt,
   }: HandlePreviewMessageOptions<BlockData>,
 ): void {
-  if (!targetOrigin || !isMessageFromWpEditor(event, targetOrigin)) {
+  const fromEmbedder = isMessageFromWpEditor(event, targetOrigin);
+  if (!targetOrigin || !fromEmbedder) {
     debugLog("Ignoring preview message from untrusted origin:", event.origin);
     return;
   }
@@ -351,6 +437,7 @@ export function handleWPBlockIframeMessage<BlockData = unknown>(
     previewKey?: unknown;
     blockData?: unknown;
     bodyClassName?: unknown;
+    previewUsesViewportHeight?: unknown;
     previewViewportHeight?: unknown;
   };
 
@@ -366,20 +453,46 @@ export function handleWPBlockIframeMessage<BlockData = unknown>(
     return;
   }
 
-  if (payload.blockData && typeof payload.blockData === "object") {
-    debugLog("blockData received from WP: ", payload.blockData);
-    onBlockDataReceipt?.(payload.blockData as BlockData);
-  }
-  if (payload.bodyClassName) {
-    // WP sets classes on the iframe <body> (color themes / dark mode).
+  if ("bodyClassName" in payload) {
+    // WP posts ancestor/page theme classes; child iframes cannot inherit
+    // canvas `.dark` via CSS. Apply before rendering so the first paint
+    // already has theme tokens. Sync rather than add so leaving a dark
+    // group clears the preview.
     debugLog("bodyClassName received from WP: ", payload);
-    const { bodyClassName } = payload;
-    if (Array.isArray(bodyClassName))
-      document.body.classList.add(...bodyClassName.map(String));
-    else if (typeof bodyClassName === "string" && bodyClassName.includes(" "))
-      document.body.classList.add(...bodyClassName.split(" "));
-    else if (typeof bodyClassName === "string")
-      document.body.classList.add(bodyClassName);
+    const body = document.body;
+    body.classList.remove("dark", "darker");
+    body.classList.remove("dark:darker");
+    const raw = payload.bodyClassName;
+    const tokens = Array.isArray(raw)
+      ? raw.map(String)
+      : String(raw ?? "")
+          .split(/\s+/)
+          .filter(Boolean);
+    const add: string[] = [];
+    const hasStyleDark = tokens.some((t) => t.includes("is-style-dark"));
+    if (
+      tokens.includes("dark") ||
+      hasStyleDark ||
+      tokens.includes("dark:darker")
+    ) {
+      add.push("dark");
+    }
+    if (
+      tokens.includes("darker") ||
+      hasStyleDark ||
+      tokens.includes("dark:darker")
+    ) {
+      add.push("darker");
+    }
+    if (add.length) body.classList.add(...add);
+  }
+
+  if (typeof payload.previewUsesViewportHeight === "boolean") {
+    const next = payload.previewUsesViewportHeight;
+    if (next !== previewUsesViewportHeight) {
+      previewUsesViewportHeight = next;
+      previewSizingModeListeners.forEach((listener) => listener(next));
+    }
   }
   if (
     typeof payload.previewViewportHeight === "number" &&
@@ -393,6 +506,10 @@ export function handleWPBlockIframeMessage<BlockData = unknown>(
       applyPreviewViewportTokens(next);
       editorViewportListeners.forEach((listener) => listener(next));
     }
+  }
+  if (payload.blockData && typeof payload.blockData === "object") {
+    debugLog("blockData received from WP: ", payload.blockData);
+    onBlockDataReceipt?.(payload.blockData as BlockData);
   }
 }
 
@@ -452,8 +569,9 @@ export const watchForDocumentHeightChanges = (
    * viewport reference. Without this, an early natural-height measure (~600px
    * for min-h heroes in a small iframe) wins and traps the preview.
    */
-  let bootstrapPending = true;
-  deferHeightUntilEditorViewport = true;
+  let bootstrapPending = previewUsesViewportHeight;
+  let firstContentReportPending = true;
+  deferHeightUntilEditorViewport = previewUsesViewportHeight;
   /**
    * After a bootstrap height report, ignore coupling inference on the next
    * viewport resize — min-h heroes look partially tied when growing from a
@@ -495,27 +613,29 @@ export const watchForDocumentHeightChanges = (
 
     const contentHeight = getDocumentHeight();
     const viewportHeight = window.innerHeight;
+    const iframeAlreadyTall =
+      viewportHeight >= editorViewportHeight - BOOTSTRAP_GAP_PX;
+    const fillsEditor =
+      contentHeight >= editorViewportHeight - BOOTSTRAP_GAP_PX;
 
-    if (contentHeight >= editorViewportHeight - BOOTSTRAP_GAP_PX) {
+    if (fillsEditor) {
       finishBootstrap();
       if (Math.abs(contentHeight - viewportHeight) > REPORT_TOLERANCE_PX) {
-        // Large overflow (abspos hero copy, etc.) should resize immediately;
-        // small drift can wait for the content debounce.
-        if (contentHeight - viewportHeight > BOOTSTRAP_GAP_PX) {
-          report(contentHeight, "bootstrap-aligned");
-        } else {
-          reportDebounced(contentHeight, "bootstrap-aligned");
-        }
+        // Immediate: remounts cancel reportDebounced and leave the iframe
+        // stuck at the editor-viewport bootstrap height (~860).
+        firstContentReportPending = false;
+        report(contentHeight, "bootstrap-aligned");
       }
       return false;
     }
 
-    // Genuinely short blocks should shrink normally — not bootstrap to one screen.
-    const iframeAlreadyTall =
-      viewportHeight >= editorViewportHeight - BOOTSTRAP_GAP_PX;
-    if (iframeAlreadyTall && contentHeight < 500) {
+    // Iframe was pre-sized to one editor screen. Short *and* mid-height
+    // blocks (cards/images ~500–700) must shrink — the old `< 500` cutoff
+    // left those pinned at ~860.
+    if (iframeAlreadyTall) {
       finishBootstrap();
-      reportDebounced(contentHeight, "content");
+      firstContentReportPending = false;
+      report(contentHeight, "content");
       return false;
     }
 
@@ -706,6 +826,13 @@ export const watchForDocumentHeightChanges = (
         if (tryViewportBootstrap()) return;
       }
 
+      if (firstContentReportPending && !couplingKnown) {
+        firstContentReportPending = false;
+        cancelDebounced();
+        report(contentHeight, "first-content");
+        return;
+      }
+
       if (couplingKnown) {
         // Keep the measured ratio; shift the offset and re-derive the target
         // (e.g. content below a 100vh hero grew).
@@ -736,6 +863,26 @@ export const watchForDocumentHeightChanges = (
     // Reference for "one screen" arrived/changed; re-derive pinned targets.
     if (couplingKnown && couplingR >= PIN_RATIO) {
       applyModel(true);
+    }
+  };
+
+  const onPreviewSizingMode = (enabled: boolean) => {
+    couplingKnown = false;
+    pinnedHeight = null;
+    valveTimestamps.length = 0;
+    cancelDebounced();
+
+    if (enabled) {
+      bootstrapPending = true;
+      deferHeightUntilEditorViewport = true;
+      tryViewportBootstrap();
+      return;
+    }
+
+    finishBootstrap();
+    if (previewHasBlockContent()) {
+      firstContentReportPending = false;
+      report(getDocumentHeight(), "compact-mode");
     }
   };
 
@@ -787,6 +934,7 @@ export const watchForDocumentHeightChanges = (
     // viewport baseline go stale and mis-classify a later edit as coupled.
     window.addEventListener("resize", evaluate);
     editorViewportListeners.add(onEditorViewport);
+    previewSizingModeListeners.add(onPreviewSizingMode);
 
     bootstrapTimer = setTimeout(() => {
       bootstrapTimer = null;
@@ -795,8 +943,19 @@ export const watchForDocumentHeightChanges = (
       // is still painting — ResizeObserver will bootstrap when content lands.
       if (!previewHasBlockContent()) return;
       finishBootstrap();
-      evaluate();
+      report(getDocumentHeight(), "bootstrap-timeout");
     }, 2500);
+
+    // Remounts (React Strict Mode) reconnect this observer after content is
+    // already painted, so there is no dC to trigger evaluate()'s report path.
+    if (previewHasBlockContent()) {
+      if (previewUsesViewportHeight && editorViewportHeight > 0) {
+        tryViewportBootstrap();
+      } else if (!previewUsesViewportHeight) {
+        firstContentReportPending = false;
+        report(getDocumentHeight(), "initial-content");
+      }
+    }
 
     // Preserve the public API (callers hold a ResizeObserver and call
     // disconnect()) while still cleaning up our extra listeners.
@@ -809,6 +968,7 @@ export const watchForDocumentHeightChanges = (
       if (mutationRaf) cancelAnimationFrame(mutationRaf);
       if (asyncLayoutRaf) cancelAnimationFrame(asyncLayoutRaf);
       editorViewportListeners.delete(onEditorViewport);
+      previewSizingModeListeners.delete(onPreviewSizingMode);
       clearBootstrapTimer();
       cancelDebounced();
       originalDisconnect();

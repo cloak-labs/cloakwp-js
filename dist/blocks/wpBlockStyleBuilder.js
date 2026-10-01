@@ -158,7 +158,7 @@ const wpBlockClassBuilder = cva({
             "space-between": "justify-between",
         },
         selfStretch: {
-            fixed: "",
+            fixed: "grow-0 shrink-0",
             fit: "",
             fill: "grow basis-[min-content] max-w-full *:max-w-full",
         },
@@ -266,9 +266,14 @@ export const wpBlockStyleBuilder = (block, classBuilder = wpBlockClassBuilder) =
         paddingRight,
         paddingLeft,
     });
-    let customClassNames = null;
-    if (className?.includes("is-style-dark"))
-        customClassNames = "dark dark:darker";
+    let wantsDark = false;
+    let wantsDarker = false;
+    if (className) {
+        const tokens = className.split(/\s+/).map((c) => c.startsWith(">") ? c.slice(1) : c);
+        wantsDark = tokens.includes("dark") || className.includes("is-style-dark");
+        wantsDarker =
+            tokens.includes("darker") || className.includes("is-style-dark");
+    }
     const filteredClassNames = excludeClassNamesStartingWith(className, [
         "is-style",
     ]);
@@ -276,8 +281,18 @@ export const wpBlockStyleBuilder = (block, classBuilder = wpBlockClassBuilder) =
     const finalClassNames = filteredClassNames
         ?.split(" ")
         ?.map((c) => (c.startsWith(">") ? c.slice(1) : c));
-    const classes = cx(backgroundColor == "transparent" ? "bg-transparent" : backgroundColor, textColor, fontSize && `text-${fontSize}`, (textAlign || align == "center" || align == "right") &&
-        `text-${textAlign || align}`, variantClasses, layout?.flexWrap == "wrap" && "flex-wrap", finalClassNames, customClassNames);
+    // Theme classes are concatenated after `cx`/`twMerge`. `twMerge` treats
+    // `dark` as a theme group class, and `dark:darker` is a Tailwind variant
+    // (not the `.darker` token selector), so either path can drop the wrapper
+    // dark mode the editor is asking for.
+    const classes = [
+        cx(backgroundColor == "transparent" ? "bg-transparent" : backgroundColor, textColor, fontSize && `text-${fontSize}`, (textAlign || align == "center" || align == "right") &&
+            `text-${textAlign || align}`, variantClasses, layout?.flexWrap == "wrap" && "flex-wrap", finalClassNames),
+        wantsDark ? "dark" : null,
+        wantsDarker ? "darker" : null,
+    ]
+        .filter(Boolean)
+        .join(" ");
     let styles = null;
     ["padding", "margin"].forEach((property) => {
         const values = style?.spacing?.[property];
@@ -306,10 +321,20 @@ export const wpBlockStyleBuilder = (block, classBuilder = wpBlockClassBuilder) =
         styles["backgroundAttachment"] =
             background.backgroundAttachment ?? "scroll";
     }
-    if (style?.layout?.flexSize) {
+    // Gutenberg only uses flexSize for children of a flex layout (it writes
+    // flex-basis, which is a no-op everywhere else). Applying it as `width`
+    // on a constrained/flow parent pins the block to the start edge.
+    const parentLayoutType = block.context?.parent?.attrs?.layout?.type;
+    if (style?.layout?.flexSize && parentLayoutType === "flex") {
         if (!styles)
             styles = {};
-        styles["flexBasis"] = style?.layout?.flexSize;
+        const flexSize = style.layout.flexSize;
+        // Match Gutenberg's flex-child "Fixed" sizing, and set `width` so it
+        // wins over component `w-full` classes (flex-basis alone does not).
+        styles["flexBasis"] = flexSize;
+        styles["width"] = flexSize;
+        styles["flexGrow"] = "0";
+        styles["flexShrink"] = "0";
     }
     if (style?.border?.radius) {
         if (!styles)

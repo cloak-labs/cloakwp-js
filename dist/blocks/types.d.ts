@@ -89,6 +89,8 @@ export type WPBlockAttributes<TSpacingPresets extends string = WPBlockSpacingPre
     href?: string;
     width?: string;
     height?: string;
+    intrinsicWidth?: number;
+    intrinsicHeight?: number;
     scale?: string;
     value?: string;
     citation?: string;

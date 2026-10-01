@@ -11,6 +11,12 @@ export const generateSitemap = (routes, options) => {
                   <url>
                       <loc>${stripTrailingSlash(siteUrl)}${route.pathname}</loc>
                       <lastmod>${route.modified}${route.modified.endsWith("Z") ? "" : "Z"}</lastmod>
+                      ${route.changeFrequency || route.changefreq
+            ? `<changefreq>${route.changeFrequency ?? route.changefreq}</changefreq>`
+            : ""}
+                      ${route.priority != null
+            ? `<priority>${route.priority}</priority>`
+            : ""}
                   </url>
               `;
     })
