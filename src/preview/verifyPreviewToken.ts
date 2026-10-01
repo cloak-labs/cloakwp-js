@@ -76,10 +76,7 @@ function isPreviewTokenPayload(value: unknown): value is PreviewTokenPayload {
 export async function verifyPreviewToken(
   token: string | null | undefined,
   secret: string | null | undefined,
-  {
-    now = Date.now(),
-    clockSkewSeconds = 30,
-  }: VerifyPreviewTokenOptions = {},
+  { now = Date.now(), clockSkewSeconds = 30 }: VerifyPreviewTokenOptions = {},
 ): Promise<PreviewTokenVerification> {
   if (!token) {
     return { valid: false, error: "missing-token" };

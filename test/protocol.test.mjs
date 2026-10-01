@@ -2,12 +2,8 @@ import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import { test } from "node:test";
 import { verifyPreviewToken } from "../dist/preview/verifyPreviewToken.js";
-import {
-  handleCloakWpRequest,
-} from "../dist/rest/handleCloakWpRequest.js";
-import {
-  parseRevalidationBody,
-} from "../dist/revalidation/request.js";
+import { handleCloakWpRequest } from "../dist/rest/handleCloakWpRequest.js";
+import { parseRevalidationBody } from "../dist/revalidation/request.js";
 
 const secret = "correct horse battery staple";
 const phpToken =
@@ -26,7 +22,9 @@ function requestOptions(overrides = {}) {
 }
 
 function signPreviewToken(payload) {
-  const encodedPayload = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  const encodedPayload = Buffer.from(JSON.stringify(payload)).toString(
+    "base64url",
+  );
   const signature = createHmac("sha256", secret)
     .update(encodedPayload)
     .digest("base64url");
@@ -221,7 +219,10 @@ test("is-authenticated is removed", async () => {
 test("password grant sets httpOnly session cookies and redirects to establish-session", async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async (input, init) => {
-    assert.equal(String(input), "https://wp.test/wp-json/cloakwp/auth/authorize");
+    assert.equal(
+      String(input),
+      "https://wp.test/wp-json/cloakwp/auth/authorize",
+    );
     assert.equal(init.headers["X-CloakWP-Secret"], "session-secret");
     const body = JSON.parse(init.body);
     assert.equal(body.grant_type, "password");
@@ -262,9 +263,26 @@ test("password grant sets httpOnly session cookies and redirects to establish-se
       /^https:\/\/wp\.test\/wp-json\/cloakwp\/auth\/establish-session\?code=login-code/,
     );
     const cookies = response.headers.getSetCookie();
-    assert.ok(cookies.some((cookie) => cookie.startsWith("cloakwp_at=access-token") && cookie.includes("HttpOnly")));
-    assert.ok(cookies.some((cookie) => cookie.startsWith("cloakwp_rt=refresh-token") && cookie.includes("HttpOnly")));
-    assert.ok(cookies.some((cookie) => cookie.startsWith("cloakwp_ui=1") && !cookie.includes("HttpOnly")));
+    assert.ok(
+      cookies.some(
+        (cookie) =>
+          cookie.startsWith("cloakwp_at=access-token") &&
+          cookie.includes("HttpOnly"),
+      ),
+    );
+    assert.ok(
+      cookies.some(
+        (cookie) =>
+          cookie.startsWith("cloakwp_rt=refresh-token") &&
+          cookie.includes("HttpOnly"),
+      ),
+    );
+    assert.ok(
+      cookies.some(
+        (cookie) =>
+          cookie.startsWith("cloakwp_ui=1") && !cookie.includes("HttpOnly"),
+      ),
+    );
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -374,10 +392,10 @@ test("logout POST reads redirect from the form body and establishes WP logout", 
     assert.equal(String(input), "https://wp.test/wp-json/cloakwp/auth/logout");
     const body = JSON.parse(init.body);
     assert.equal(body.refresh_token, "existing-refresh");
-    return new Response(
-      JSON.stringify({ wpLogoutCode: "logout-code" }),
-      { status: 200, headers: { "Content-Type": "application/json" } },
-    );
+    return new Response(JSON.stringify({ wpLogoutCode: "logout-code" }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   };
 
   try {
@@ -409,9 +427,24 @@ test("logout POST reads redirect from the form body and establishes WP logout", 
       "https://site.test/portfolio",
     );
     const cookies = response.headers.getSetCookie();
-    assert.ok(cookies.some((cookie) => cookie.startsWith("cloakwp_at=") && cookie.includes("Max-Age=0")));
-    assert.ok(cookies.some((cookie) => cookie.startsWith("cloakwp_rt=") && cookie.includes("Max-Age=0")));
-    assert.ok(cookies.some((cookie) => cookie.startsWith("cloakwp_ui=") && cookie.includes("Max-Age=0")));
+    assert.ok(
+      cookies.some(
+        (cookie) =>
+          cookie.startsWith("cloakwp_at=") && cookie.includes("Max-Age=0"),
+      ),
+    );
+    assert.ok(
+      cookies.some(
+        (cookie) =>
+          cookie.startsWith("cloakwp_rt=") && cookie.includes("Max-Age=0"),
+      ),
+    );
+    assert.ok(
+      cookies.some(
+        (cookie) =>
+          cookie.startsWith("cloakwp_ui=") && cookie.includes("Max-Age=0"),
+      ),
+    );
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -448,7 +481,12 @@ test("logout POST still clears cookies when the WP refresh token is already revo
     assert.equal(response.status, 302);
     assert.equal(response.headers.get("location"), "https://site.test/");
     const cookies = response.headers.getSetCookie();
-    assert.ok(cookies.some((cookie) => cookie.startsWith("cloakwp_ui=") && cookie.includes("Max-Age=0")));
+    assert.ok(
+      cookies.some(
+        (cookie) =>
+          cookie.startsWith("cloakwp_ui=") && cookie.includes("Max-Age=0"),
+      ),
+    );
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -486,8 +524,18 @@ test("logout GET from wp-admin redirect clears cookies without Origin", async ()
     assert.equal(response.status, 302);
     assert.equal(response.headers.get("location"), "https://site.test/");
     const cookies = response.headers.getSetCookie();
-    assert.ok(cookies.some((cookie) => cookie.startsWith("cloakwp_at=") && cookie.includes("Max-Age=0")));
-    assert.ok(cookies.some((cookie) => cookie.startsWith("cloakwp_ui=") && cookie.includes("Max-Age=0")));
+    assert.ok(
+      cookies.some(
+        (cookie) =>
+          cookie.startsWith("cloakwp_at=") && cookie.includes("Max-Age=0"),
+      ),
+    );
+    assert.ok(
+      cookies.some(
+        (cookie) =>
+          cookie.startsWith("cloakwp_ui=") && cookie.includes("Max-Age=0"),
+      ),
+    );
     assert.equal(fetched, 1);
   } finally {
     globalThis.fetch = originalFetch;

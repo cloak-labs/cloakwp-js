@@ -1,4 +1,7 @@
-import { withPlugins, type ContentSourceConfig } from "@cloakui/content-sources";
+import {
+  withPlugins,
+  type ContentSourceConfig,
+} from "@cloakui/content-sources";
 import {
   assertMachineAuthNotExposed,
   resolveMachineAuth,
@@ -10,7 +13,11 @@ export const wpRestApiClient =
   async (incomingConfig: ContentSourceConfig): Promise<ContentSourceConfig> => {
     const optionsAfterPlugins = await withPlugins(options, options.plugins);
 
-    const { auth = {}, wpapiOptions = {}, clientMutations } = optionsAfterPlugins;
+    const {
+      auth = {},
+      wpapiOptions = {},
+      clientMutations,
+    } = optionsAfterPlugins;
 
     assertMachineAuthNotExposed(auth, typeof window !== "undefined");
 

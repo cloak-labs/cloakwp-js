@@ -197,8 +197,9 @@ const wpBlockClassBuilder = cva({
   },
 });
 
-export interface WPBlockVariants
-  extends VariantProps<typeof wpBlockClassBuilder> {}
+export interface WPBlockVariants extends VariantProps<
+  typeof wpBlockClassBuilder
+> {}
 
 type WPBlockStyleObject = {
   padding?: string;
@@ -209,7 +210,7 @@ type WPBlockStyleObject = {
 
 export const wpBlockStyleBuilder = (
   block: WPBlockDataWithExtraContext,
-  classBuilder: typeof wpBlockClassBuilder = wpBlockClassBuilder
+  classBuilder: typeof wpBlockClassBuilder = wpBlockClassBuilder,
 ): { classes: string; styles: WPBlockStyleObject | null } => {
   const {
     backgroundColor,
@@ -319,9 +320,9 @@ export const wpBlockStyleBuilder = (
   let wantsDark = false;
   let wantsDarker = false;
   if (className) {
-    const tokens = className.split(/\s+/).map((c) =>
-      c.startsWith(">") ? c.slice(1) : c,
-    );
+    const tokens = className
+      .split(/\s+/)
+      .map((c) => (c.startsWith(">") ? c.slice(1) : c));
     wantsDark = tokens.includes("dark") || className.includes("is-style-dark");
     wantsDarker =
       tokens.includes("darker") || className.includes("is-style-dark");
@@ -414,9 +415,8 @@ export const wpBlockStyleBuilder = (
     if (typeof radius == "string") {
       styles["borderRadius"] = radius;
     } else {
-      styles[
-        "borderRadius"
-      ] = `${radius.topLeft || 0} ${radius.topRight || 0} ${radius.bottomRight || 0} ${radius.bottomLeft || 0}`;
+      styles["borderRadius"] =
+        `${radius.topLeft || 0} ${radius.topRight || 0} ${radius.bottomRight || 0} ${radius.bottomLeft || 0}`;
     }
   }
 

@@ -3,7 +3,7 @@ import { type PreviewModeParams } from "./types";
 export const getPreviewParams = (
   revisionId: string,
   postId: string,
-  postType: string
+  postType: string,
 ): PreviewModeParams | { error: string } => {
   if (!postId)
     return {

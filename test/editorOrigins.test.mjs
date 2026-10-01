@@ -22,7 +22,10 @@ test("treats local WordPress http and https origins as the same editor", () => {
 
 test("rejects a different host even when both origins are trusted", () => {
   assert.equal(
-    previewOriginsMatch("https://wp.localhost", "https://staging.pillarlabs.co"),
+    previewOriginsMatch(
+      "https://wp.localhost",
+      "https://staging.pillarlabs.co",
+    ),
     false,
   );
   assert.equal(

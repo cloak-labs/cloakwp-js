@@ -25,11 +25,7 @@ test("prefers application passwords over WP_JWT", () => {
 
 test("throws when machine credentials are used in a browser bundle", () => {
   assert.throws(
-    () =>
-      assertMachineAuthNotExposed(
-        { applicationPassword: "secret" },
-        true,
-      ),
+    () => assertMachineAuthNotExposed({ applicationPassword: "secret" }, true),
     /exposing WordPress machine credentials/,
   );
   assert.doesNotThrow(() =>

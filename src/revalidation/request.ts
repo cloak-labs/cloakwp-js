@@ -1,8 +1,4 @@
-import {
-  bytesToHex,
-  constantTimeEqual,
-  hmacSha256,
-} from "../auth/crypto.js";
+import { bytesToHex, constantTimeEqual, hmacSha256 } from "../auth/crypto.js";
 import { normalizePathname } from "../rest/normalizePathname.js";
 
 const MAX_REVALIDATE_PATHS = 100;
@@ -41,9 +37,7 @@ function json(data: unknown, status = 200): Response {
   return Response.json(data, { status });
 }
 
-export function parseRevalidationBody(
-  rawBody: string,
-): ParsedRevalidationBody {
+export function parseRevalidationBody(rawBody: string): ParsedRevalidationBody {
   let body: unknown;
   try {
     body = JSON.parse(rawBody);

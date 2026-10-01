@@ -185,7 +185,11 @@ function clearSessionCookies(headers: Headers, secure: boolean): void {
   );
   headers.append(
     "Set-Cookie",
-    cookieHeader(SESSION_COOKIE_HINT, "", { httpOnly: false, maxAge: 0, secure }),
+    cookieHeader(SESSION_COOKIE_HINT, "", {
+      httpOnly: false,
+      maxAge: 0,
+      secure,
+    }),
   );
 }
 
@@ -265,7 +269,9 @@ function establishLocation(
   session: CloakWpSessionOptions,
   code: string,
   redirect: string,
-  path: "/auth/establish-session" | "/auth/establish-logout" = "/auth/establish-session",
+  path:
+    | "/auth/establish-session"
+    | "/auth/establish-logout" = "/auth/establish-session",
 ): string {
   const url = new URL(wordpressRestUrl(session.wordpressUrl, path));
   url.searchParams.set("code", code);
@@ -311,7 +317,8 @@ export async function handleSessionRequest(
         grant_type: grantType,
         username: body.username ?? "",
         password: body.password ?? "",
-        refresh_token: body.refresh_token || cookies[SESSION_COOKIE_REFRESH] || "",
+        refresh_token:
+          body.refresh_token || cookies[SESSION_COOKIE_REFRESH] || "",
         code: body.code ?? "",
       });
 
@@ -323,7 +330,10 @@ export async function handleSessionRequest(
           });
         }
         return json(
-          { error: result.payload.message || result.payload.error || "Unauthorized." },
+          {
+            error:
+              result.payload.message || result.payload.error || "Unauthorized.",
+          },
           result.status || 401,
         );
       }
@@ -359,7 +369,8 @@ export async function handleSessionRequest(
         clearSessionCookies(headers, secure);
         return new Response(
           JSON.stringify({
-            error: result.payload.message || result.payload.error || "Unauthorized.",
+            error:
+              result.payload.message || result.payload.error || "Unauthorized.",
           }),
           {
             status: result.status || 401,
@@ -370,7 +381,10 @@ export async function handleSessionRequest(
 
       const headers = new Headers({ "Content-Type": "application/json" });
       appendSessionCookies(headers, result.payload, secure);
-      return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
+      return new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers,
+      });
     }
 
     case "logout": {

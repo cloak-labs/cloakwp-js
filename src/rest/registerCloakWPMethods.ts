@@ -10,12 +10,12 @@ export const registerCloakWPMethods = (incomingConfig: RestApiClientConfig) => {
 
         client.menus = client.registerRoute(
           "cloakwp",
-          "/menus/(?P<id>[a-zA-Z0-9-]+)"
+          "/menus/(?P<id>[a-zA-Z0-9-]+)",
         );
 
         client.globals = client.registerRoute(
           "cloakwp",
-          "/globals/(?P<id>[a-zA-Z0-9_-]+)"
+          "/globals/(?P<id>[a-zA-Z0-9_-]+)",
         );
 
         client.frontpage = client.registerRoute("cloakwp", "/frontpage");

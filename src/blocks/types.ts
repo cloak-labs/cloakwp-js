@@ -42,7 +42,7 @@ export type WPBlockSpacingValues =
   | `${number}`;
 
 export type WPBlockSpacingObject<
-  TSpacingPresets extends string = WPBlockSpacingPresets
+  TSpacingPresets extends string = WPBlockSpacingPresets,
 > = {
   top?: TSpacingPresets | WPBlockSpacingValues;
   right?: TSpacingPresets | WPBlockSpacingValues;
@@ -51,7 +51,7 @@ export type WPBlockSpacingObject<
 };
 
 export type WPBlockAttributes<
-  TSpacingPresets extends string = WPBlockSpacingPresets
+  TSpacingPresets extends string = WPBlockSpacingPresets,
 > = {
   align?: "wide" | "full" | "center" | "right";
   style?: {
@@ -160,13 +160,13 @@ export type WPBlockBinding = {
 export type WPBlockRendererConfig<
   TComponent extends ComponentLike = ComponentLike,
   TRenderOutput = any,
-  TBlockData = RestApiBlockData
+  TBlockData = RestApiBlockData,
 > = BlockRendererConfig<TComponent, TRenderOutput, TBlockData>;
 
 export type WPDataRouter<
   TProps = EmptyObjectOrRecord,
   TBlockData = RestApiBlockData,
-  TComponent extends ComponentLike = ComponentLike
+  TComponent extends ComponentLike = ComponentLike,
 > = DataRouter<
   TProps,
   TBlockData,
@@ -176,13 +176,13 @@ export type WPDataRouter<
 
 export type WPGlobalDataRouter<
   TProps = EmptyObjectOrRecord,
-  TBlockData = RestApiBlockData
+  TBlockData = RestApiBlockData,
 > = GlobalDataRouter<TProps, TBlockData>;
 
 export type WPSingleBlockConfigWithoutVariants<
   TComponent extends ComponentLike = ComponentLike,
   TProps = EmptyObjectOrRecord,
-  TBlockData = RestApiBlockData
+  TBlockData = RestApiBlockData,
 > = SingleBlockConfigWithoutVariants<TComponent, TProps, TBlockData>;
 
 export type WPVariantsRouter<TBlockData = RestApiBlockData> =
@@ -191,17 +191,17 @@ export type WPVariantsRouter<TBlockData = RestApiBlockData> =
 export type WPSingleBlockConfigWithVariants<
   TComponent extends ComponentLike = ComponentLike,
   TProps = EmptyObjectOrRecord,
-  TBlockData = RestApiBlockData
+  TBlockData = RestApiBlockData,
 > = SingleBlockConfigWithVariants<TComponent, TProps, TBlockData>;
 
 export type WPSingleBlockConfig<
   TComponent extends ComponentLike = ComponentLike,
-  TBlockData = RestApiBlockData
+  TBlockData = RestApiBlockData,
 > = SingleBlockConfig<TComponent, TBlockData>;
 
 export type WPBlocksConfig<
   TComponent extends ComponentLike = ComponentLike,
-  TBlockData = RestApiBlockData
+  TBlockData = RestApiBlockData,
 > = BlocksConfig<TComponent, TBlockData>;
 
 export type WPBlockDataWithExtraContext<TBlockData = RestApiBlockData> =

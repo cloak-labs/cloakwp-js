@@ -99,8 +99,7 @@ export const applyPreviewViewportTokens = (heightPx: number) => {
   const value = `${Math.round(heightPx)}px`;
   // Defaults live on #root in shared/styles/base.css — that wins over html for
   // block content, so preview overrides must target the same element.
-  const target =
-    document.getElementById("root") ?? document.documentElement;
+  const target = document.getElementById("root") ?? document.documentElement;
   for (const name of PREVIEW_VIEWPORT_CSS_VARS) {
     target.style.setProperty(name, value);
   }
@@ -228,11 +227,7 @@ export const getDocumentHeight = () => {
 
   const body = document.body;
   const html = document.documentElement;
-  return Math.max(
-    minHeight,
-    body?.scrollHeight ?? 0,
-    html?.scrollHeight ?? 0,
-  );
+  return Math.max(minHeight, body?.scrollHeight ?? 0, html?.scrollHeight ?? 0);
 };
 
 export function getConfiguredWpOrigin(): string | null {
@@ -284,7 +279,10 @@ export function previewOriginsMatch(
   try {
     const eventUrl = new URL(eventOrigin);
     const targetUrl = new URL(targetOrigin);
-    if (eventUrl.hostname !== targetUrl.hostname || eventUrl.port !== targetUrl.port) {
+    if (
+      eventUrl.hostname !== targetUrl.hostname ||
+      eventUrl.port !== targetUrl.port
+    ) {
       return false;
     }
     return isTrustedWpOrigin(eventOrigin) && isTrustedWpOrigin(targetOrigin);
@@ -348,7 +346,7 @@ function resolvePreviewMessageContext(
   const previewKey =
     context?.previewKey ??
     (typeof window !== "undefined"
-      ? new URLSearchParams(window.location.search).get("previewKey") ?? ""
+      ? (new URLSearchParams(window.location.search).get("previewKey") ?? "")
       : "");
   const targetOrigin = context?.targetOrigin ?? resolvePreviewTargetOrigin();
   return previewKey && targetOrigin ? { previewKey, targetOrigin } : null;
@@ -552,8 +550,7 @@ export const watchForDocumentHeightChanges = (
   let lastContentHeight = getDocumentHeight();
   let lastViewportHeight =
     typeof window !== "undefined" ? window.innerHeight : 0;
-  let lastViewportWidth =
-    typeof window !== "undefined" ? window.innerWidth : 0;
+  let lastViewportWidth = typeof window !== "undefined" ? window.innerWidth : 0;
 
   // Local linear model content(V) = r * V + b, measured from viewport probes.
   let couplingR = 0;
@@ -671,7 +668,10 @@ export const watchForDocumentHeightChanges = (
 
   const valveOpen = () => {
     const now = Date.now();
-    while (valveTimestamps.length && now - valveTimestamps[0] > VALVE_WINDOW_MS) {
+    while (
+      valveTimestamps.length &&
+      now - valveTimestamps[0] > VALVE_WINDOW_MS
+    ) {
       valveTimestamps.shift();
     }
     return valveTimestamps.length < VALVE_MAX_REPORTS;
@@ -694,7 +694,11 @@ export const watchForDocumentHeightChanges = (
     // Partially tied: the loop converges to a fixed point where content
     // exactly fits its own iframe — jump straight there.
     const fixedPoint = couplingB / (1 - couplingR);
-    if (!Number.isFinite(fixedPoint) || fixedPoint <= 0 || fixedPoint > MAX_TARGET_PX) {
+    if (
+      !Number.isFinite(fixedPoint) ||
+      fixedPoint <= 0 ||
+      fixedPoint > MAX_TARGET_PX
+    ) {
       return lastSentHeight ?? Math.round(lastContentHeight);
     }
     return Math.round(fixedPoint);

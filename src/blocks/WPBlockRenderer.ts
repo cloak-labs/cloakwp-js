@@ -15,10 +15,10 @@ import { type RestApiBlockData } from "./types";
 export class WPBlockRenderer<
   TComponent extends ComponentLike = ComponentLike,
   TRenderOutput = any,
-  TBlockData = RestApiBlockData
+  TBlockData = RestApiBlockData,
 > extends BlockRenderer<TComponent, TRenderOutput, TBlockData> {
   constructor(
-    config: BlockRendererConfig<TComponent, TRenderOutput, Partial<TBlockData>>
+    config: BlockRendererConfig<TComponent, TRenderOutput, Partial<TBlockData>>,
   ) {
     // set a default value for `blockIdField` to "name", which is what CloakWP's `RestApiBlockData` uses
     let configWithDefaults: BlockRendererConfig<
