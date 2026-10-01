@@ -54,13 +54,15 @@
   },
   "scripts": {
     "dev": "tsc -p tsconfig.json -w --preserveWatchOutput",
-    "zzz-dev": "tsc-watch --onFailure \"echo Beep! Compilation Failed\" --noClear",
+    "zzz-dev": "tsc -p tsconfig.json -w --preserveWatchOutput",
     "build": "npm run build-ts",
     "build-ts": "tsc -p tsconfig.json",
     "test": "npm run build && node --test test/*.test.mjs",
     "clean": "rm -rf .turbo && rm -rf dist",
     "clean:modules": "rm -rf node_modules",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
   },
   "repository": {
     "type": "git",
@@ -89,10 +91,10 @@
     "@cloakwp/wpapi": "^2.0.2"
   },
   "devDependencies": {
-    "@types/node": "^18.18.1",
-    "tsc-watch": "^5.0.3",
-    "typescript": "^5.3.2",
-    "@cloakui/styles": "workspace:*"
+    "@types/node": "^18.19.130",
+    "typescript": "7.0.2",
+    "@cloakui/styles": "workspace:*",
+    "oxfmt": "0.71.0"
   },
   "peerDependencies": {
     "@cloakui/styles": ">= 0.3.x"

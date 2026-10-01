@@ -15,5 +15,5 @@ export type VerifyPreviewTokenOptions = {
     now?: number;
     clockSkewSeconds?: number;
 };
-export declare function verifyPreviewToken(token: string | null | undefined, secret: string | null | undefined, { now, clockSkewSeconds, }?: VerifyPreviewTokenOptions): Promise<PreviewTokenVerification>;
+export declare function verifyPreviewToken(token: string | null | undefined, secret: string | null | undefined, { now, clockSkewSeconds }?: VerifyPreviewTokenOptions): Promise<PreviewTokenVerification>;
 //# sourceMappingURL=verifyPreviewToken.d.ts.map

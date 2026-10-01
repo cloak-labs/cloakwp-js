@@ -1,8 +1,8 @@
-import { withPlugins } from "@cloakui/content-sources";
+import { withPlugins, } from "@cloakui/content-sources";
 import { assertMachineAuthNotExposed, resolveMachineAuth, } from "../auth/machineAuth.js";
 export const wpRestApiClient = (options) => async (incomingConfig) => {
     const optionsAfterPlugins = await withPlugins(options, options.plugins);
-    const { auth = {}, wpapiOptions = {}, clientMutations } = optionsAfterPlugins;
+    const { auth = {}, wpapiOptions = {}, clientMutations, } = optionsAfterPlugins;
     assertMachineAuthNotExposed(auth, typeof window !== "undefined");
     const wpUrl = typeof incomingConfig.url === "string"
         ? incomingConfig.url

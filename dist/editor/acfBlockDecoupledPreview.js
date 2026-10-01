@@ -241,7 +241,8 @@ export function previewOriginsMatch(eventOrigin, targetOrigin) {
     try {
         const eventUrl = new URL(eventOrigin);
         const targetUrl = new URL(targetOrigin);
-        if (eventUrl.hostname !== targetUrl.hostname || eventUrl.port !== targetUrl.port) {
+        if (eventUrl.hostname !== targetUrl.hostname ||
+            eventUrl.port !== targetUrl.port) {
             return false;
         }
         return isTrustedWpOrigin(eventOrigin) && isTrustedWpOrigin(targetOrigin);
@@ -299,7 +300,7 @@ export function resolvePreviewTargetOrigin(preferred) {
 function resolvePreviewMessageContext(context) {
     const previewKey = context?.previewKey ??
         (typeof window !== "undefined"
-            ? new URLSearchParams(window.location.search).get("previewKey") ?? ""
+            ? (new URLSearchParams(window.location.search).get("previewKey") ?? "")
             : "");
     const targetOrigin = context?.targetOrigin ?? resolvePreviewTargetOrigin();
     return previewKey && targetOrigin ? { previewKey, targetOrigin } : null;
@@ -567,7 +568,8 @@ export const watchForDocumentHeightChanges = (options) => {
     };
     const valveOpen = () => {
         const now = Date.now();
-        while (valveTimestamps.length && now - valveTimestamps[0] > VALVE_WINDOW_MS) {
+        while (valveTimestamps.length &&
+            now - valveTimestamps[0] > VALVE_WINDOW_MS) {
             valveTimestamps.shift();
         }
         return valveTimestamps.length < VALVE_MAX_REPORTS;
@@ -588,7 +590,9 @@ export const watchForDocumentHeightChanges = (options) => {
         // Partially tied: the loop converges to a fixed point where content
         // exactly fits its own iframe — jump straight there.
         const fixedPoint = couplingB / (1 - couplingR);
-        if (!Number.isFinite(fixedPoint) || fixedPoint <= 0 || fixedPoint > MAX_TARGET_PX) {
+        if (!Number.isFinite(fixedPoint) ||
+            fixedPoint <= 0 ||
+            fixedPoint > MAX_TARGET_PX) {
             return lastSentHeight ?? Math.round(lastContentHeight);
         }
         return Math.round(fixedPoint);

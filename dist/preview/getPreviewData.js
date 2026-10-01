@@ -1,6 +1,5 @@
 import { ContentSourceRegistry } from "@cloakui/content-sources";
-export async function getPreviewData(previewParams, serverApiClient // TODO: type this to WPAPI client once that package is TS
-) {
+export async function getPreviewData(previewParams, serverApiClient) {
     const { revisionId = null, postId, apiMethod } = previewParams;
     const wp = serverApiClient ?? ContentSourceRegistry.get().client();
     const page = wp[apiMethod]?.().id(postId);

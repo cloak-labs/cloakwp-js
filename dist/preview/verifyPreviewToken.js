@@ -31,7 +31,7 @@ function isPreviewTokenPayload(value) {
     }
     return true;
 }
-export async function verifyPreviewToken(token, secret, { now = Date.now(), clockSkewSeconds = 30, } = {}) {
+export async function verifyPreviewToken(token, secret, { now = Date.now(), clockSkewSeconds = 30 } = {}) {
     if (!token) {
         return { valid: false, error: "missing-token" };
     }

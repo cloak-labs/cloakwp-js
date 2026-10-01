@@ -1,4 +1,4 @@
-import { bytesToHex, constantTimeEqual, hmacSha256, } from "../auth/crypto.js";
+import { bytesToHex, constantTimeEqual, hmacSha256 } from "../auth/crypto.js";
 import { normalizePathname } from "../rest/normalizePathname.js";
 const MAX_REVALIDATE_PATHS = 100;
 const SIGNATURE_MAX_AGE_SECONDS = 300;

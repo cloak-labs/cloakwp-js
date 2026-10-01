@@ -108,7 +108,11 @@ function clearSessionCookies(headers, secure) {
     const expired = { httpOnly: true, maxAge: 0, secure };
     headers.append("Set-Cookie", cookieHeader(SESSION_COOKIE_ACCESS, "", expired));
     headers.append("Set-Cookie", cookieHeader(SESSION_COOKIE_REFRESH, "", expired));
-    headers.append("Set-Cookie", cookieHeader(SESSION_COOKIE_HINT, "", { httpOnly: false, maxAge: 0, secure }));
+    headers.append("Set-Cookie", cookieHeader(SESSION_COOKIE_HINT, "", {
+        httpOnly: false,
+        maxAge: 0,
+        secure,
+    }));
 }
 function wordpressRestUrl(wordpressUrl, path) {
     return `${wordpressUrl.replace(/\/$/, "")}/wp-json/cloakwp${path}`;
@@ -209,7 +213,9 @@ export async function handleSessionRequest(request, route, session) {
                         redirect: new URL(frontendRedirect).pathname,
                     });
                 }
-                return json({ error: result.payload.message || result.payload.error || "Unauthorized." }, result.status || 401);
+                return json({
+                    error: result.payload.message || result.payload.error || "Unauthorized.",
+                }, result.status || 401);
             }
             const headers = new Headers({
                 Location: establishLocation(session, result.payload.wpLoginCode, frontendRedirect),
@@ -242,7 +248,10 @@ export async function handleSessionRequest(request, route, session) {
             }
             const headers = new Headers({ "Content-Type": "application/json" });
             appendSessionCookies(headers, result.payload, secure);
-            return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
+            return new Response(JSON.stringify({ ok: true }), {
+                status: 200,
+                headers,
+            });
         }
         case "logout": {
             if (request.method !== "GET" && request.method !== "POST") {
