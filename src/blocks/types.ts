@@ -59,13 +59,17 @@ export type WPBlockAttributes<
       selfStretch?: "fixed" | "fill" | "fit";
       flexSize?: string;
     };
+    css?: string;
     typography?: {
+      textAlign?: "left" | "center" | "right" | "justify";
       textTransform?: "none" | "uppercase" | "lowercase" | "capitalize";
       fontFamily?: string;
       fontStyle?: "normal" | "italic";
       fontWeight?: string;
       letterSpacing?: string;
       textDecoration?: "none" | "line-through" | "underline";
+      textIndent?: string;
+      textColumns?: number | string;
     };
     spacing?: {
       blockGap?: TSpacingPresets | WPBlockSpacingObject<TSpacingPresets>;
@@ -128,6 +132,7 @@ export type WPBlockAttributes<
   level?: string;
   content?: string;
   textAlign?: string;
+  fitText?: boolean;
   aspectRatio?: string;
   alt?: string;
   caption?: string;

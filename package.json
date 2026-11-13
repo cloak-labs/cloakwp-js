@@ -21,6 +21,11 @@
       "import": "./dist/blocks/index.js",
       "types": "./dist/blocks/index.d.ts"
     },
+    "./block-styles": {
+      "types": "./dist/blocks/style-adapter.d.ts",
+      "require": "./dist/blocks/style-adapter.js",
+      "import": "./dist/blocks/style-adapter.js"
+    },
     "./cms": {
       "require": "./dist/cms/index.js",
       "import": "./dist/cms/index.js",
@@ -85,6 +90,7 @@
   },
   "homepage": "https://github.com/cloak-labs/cloakwp-js#readme",
   "dependencies": {
+    "@cloakui/block-styles": "workspace:*",
     "@cloakui/block-renderer": "^0.4.0",
     "@cloakui/content-sources": "^0.4.0",
     "@cloakui/utils": "^0.1.4",

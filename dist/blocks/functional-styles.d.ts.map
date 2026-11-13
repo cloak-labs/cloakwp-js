@@ -1,0 +1,1 @@
+{"version":3,"file":"functional-styles.d.ts","sourceRoot":"","sources":["../../src/blocks/functional-styles.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,2BAA2B,EAAE,MAAM,SAAS,CAAC;AAE3D,kFAAkF;AAClF,wBAAgB,uBAAuB,CAAC,KAAK,EAAE,2BAA2B,GAAG;IAC3E,OAAO,EAAE,MAAM,CAAC;IAChB,MAAM,EAAE,MAAM,CAAC,MAAM,EAAE,MAAM,CAAC,GAAG,IAAI,CAAC;CACvC,CA0FA"}
