@@ -33,8 +33,9 @@ export function base64UrlToBytes(value) {
         .replace(/_/g, "/")
         .padEnd(Math.ceil(value.length / 4) * 4, "=");
     try {
-        if (typeof Buffer !== "undefined") {
-            return new Uint8Array(Buffer.from(padded, "base64"));
+        const NodeBuffer = globalThis.Buffer;
+        if (NodeBuffer) {
+            return new Uint8Array(NodeBuffer.from(padded, "base64"));
         }
         const decoded = atob(padded);
         return Uint8Array.from(decoded, (character) => character.charCodeAt(0));
@@ -44,8 +45,9 @@ export function base64UrlToBytes(value) {
     }
 }
 export function bytesToBase64Url(bytes) {
-    const base64 = typeof Buffer !== "undefined"
-        ? Buffer.from(bytes).toString("base64")
+    const NodeBuffer = globalThis.Buffer;
+    const base64 = NodeBuffer
+        ? NodeBuffer.from(bytes).toString("base64")
         : btoa(String.fromCharCode(...bytes));
     return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }

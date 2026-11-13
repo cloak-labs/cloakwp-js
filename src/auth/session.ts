@@ -4,7 +4,7 @@ export const SESSION_COOKIE_HINT = "cloakwp_ui";
 
 export const SESSION_SECRET_HEADER = "X-CloakWP-Secret";
 
-export const DEFAULT_LOGIN_PATH = "/__cloakwp/login";
+export const DEFAULT_LOGIN_PATH = "/_admin";
 export const DEFAULT_LOGOUT_PATH = "/__cloakwp/logout";
 
 export function parseCookieHeader(

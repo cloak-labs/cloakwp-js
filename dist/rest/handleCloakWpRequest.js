@@ -32,7 +32,8 @@ export async function handleCloakWpRequest(request, options) {
                 return json({ error: "Unauthorized." }, 401);
             }
             const pathname = normalizePathname(url.searchParams.get("pathname"));
-            if (!pathname || pathname !== verification.payload.pathname) {
+            if (!pathname ||
+                pathname !== normalizePathname(verification.payload.pathname)) {
                 return json({ error: "Invalid preview pathname." }, 400);
             }
             const params = getPreviewParams(url.searchParams.get("revisionId") ?? "", url.searchParams.get("postId") ?? "", url.searchParams.get("postType") ?? "");

@@ -176,7 +176,7 @@ test("accepts PHP-compatible timestamped body signatures", async () => {
 
 test("post previews require a token bound to the post and pathname", async () => {
   const previewModes = [];
-  const pathname = "/work/example";
+  const pathname = "/work/example/";
   const token = signPreviewToken({
     previewKey: "post-42",
     pathname,
@@ -196,7 +196,8 @@ test("post previews require a token bound to the post and pathname", async () =>
   );
 
   assert.equal(response.status, 307);
-  assert.equal(response.headers.get("location"), pathname);
+  assert.equal(response.headers.get("location"), "/work/example");
+  assert.equal(previewModes[0].pathname, "/work/example");
   assert.equal(previewModes[0].data.postId, "42");
 
   const mismatched = await handleCloakWpRequest(

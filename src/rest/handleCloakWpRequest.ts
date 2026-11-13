@@ -81,7 +81,10 @@ export async function handleCloakWpRequest(
       }
 
       const pathname = normalizePathname(url.searchParams.get("pathname"));
-      if (!pathname || pathname !== verification.payload.pathname) {
+      if (
+        !pathname ||
+        pathname !== normalizePathname(verification.payload.pathname)
+      ) {
         return json({ error: "Invalid preview pathname." }, 400);
       }
 
