@@ -5,16 +5,17 @@ export const getPreviewParams = (
   postId: string,
   postType: string,
 ): PreviewModeParams | { error: string } => {
-  if (!postId)
+  if (!/^[1-9]\d*$/.test(postId))
     return {
-      error:
-        'A master post ID was not supplied -- pass it in via a "postId" parameter.',
+      error: 'A valid master post ID is required in "postId".',
     };
 
-  if (!postType)
+  if (revisionId && !/^[1-9]\d*$/.test(revisionId))
+    return { error: 'Invalid "revisionId".' };
+
+  if (!/^[a-z0-9_-]{1,20}$/.test(postType))
     return {
-      error:
-        'A post type was not supplied -- pass it in via a "postType" parameter.',
+      error: 'A valid WordPress post type is required in "postType".',
     };
 
   let apiMethod = postType;
