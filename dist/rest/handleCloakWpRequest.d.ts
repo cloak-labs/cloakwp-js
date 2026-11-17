@@ -1,12 +1,8 @@
+import type { PreviewModeParams } from "../preview/types.js";
 import { type RevalidationRequestOptions } from "../revalidation/request.js";
 import { type CloakWpSessionOptions } from "./handleSessionRequest.js";
 export type EnablePreviewInput = {
-    data: {
-        revisionId: string;
-        postId: string;
-        apiMethod: string;
-        postType: string;
-    };
+    data: PreviewModeParams;
     pathname: string;
     maxAge: number;
 };

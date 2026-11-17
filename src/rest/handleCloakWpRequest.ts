@@ -1,4 +1,6 @@
 import { verifyPreviewToken } from "../preview/verifyPreviewToken.js";
+import { getPreviewParams } from "../preview/getPreviewParams.js";
+import type { PreviewModeParams } from "../preview/types.js";
 import {
   handleRevalidationRequest,
   type RevalidationRequestOptions,
@@ -10,12 +12,7 @@ import {
 import { normalizePathname } from "./normalizePathname.js";
 
 export type EnablePreviewInput = {
-  data: {
-    revisionId: string;
-    postId: string;
-    apiMethod: string;
-    postType: string;
-  };
+  data: PreviewModeParams;
   pathname: string;
   maxAge: number;
 };
@@ -31,32 +28,6 @@ export type { CloakWpSessionOptions } from "./handleSessionRequest.js";
 
 function json(data: unknown, status = 200): Response {
   return Response.json(data, { status });
-}
-
-function getPreviewParams(
-  revisionId: string,
-  postId: string,
-  postType: string,
-):
-  | EnablePreviewInput["data"]
-  | {
-      error: string;
-    } {
-  if (!postId) {
-    return { error: "A master post ID was not supplied." };
-  }
-  if (!postType) {
-    return { error: "A post type was not supplied." };
-  }
-
-  const apiMethod =
-    postType === "page" ? "pages" : postType === "post" ? "posts" : postType;
-  return {
-    revisionId,
-    postId,
-    apiMethod,
-    postType,
-  };
 }
 
 export async function handleCloakWpRequest(
