@@ -1,24 +1,10 @@
 import { verifyPreviewToken } from "../preview/verifyPreviewToken.js";
+import { getPreviewParams } from "../preview/getPreviewParams.js";
 import { handleRevalidationRequest, } from "../revalidation/request.js";
 import { handleSessionRequest, } from "./handleSessionRequest.js";
 import { normalizePathname } from "./normalizePathname.js";
 function json(data, status = 200) {
     return Response.json(data, { status });
-}
-function getPreviewParams(revisionId, postId, postType) {
-    if (!postId) {
-        return { error: "A master post ID was not supplied." };
-    }
-    if (!postType) {
-        return { error: "A post type was not supplied." };
-    }
-    const apiMethod = postType === "page" ? "pages" : postType === "post" ? "posts" : postType;
-    return {
-        revisionId,
-        postId,
-        apiMethod,
-        postType,
-    };
 }
 export async function handleCloakWpRequest(request, options) {
     const route = options.route[0];
